@@ -70,7 +70,9 @@ export default function Footer() {
           <h2 className="text-xl font-bold text-[#FFE08A] mb-1 tracking-wide">
             WeWIN Education
           </h2>
-          <p className="text-sm opacity-90">Nâng tầm tiếng Anh – Mở rộng tương lai 🌏</p>
+          <p className="text-sm opacity-90">
+            Nâng tầm tiếng Anh – Mở rộng tương lai 🌏
+          </p>
         </div>
 
         {/* Info Grid */}
@@ -82,8 +84,15 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm opacity-90">
               <li>292B Nơ Trang Long, phường, Bình Thạnh, TP.HCM</li>
-              <li>☎️ <a href="tel:0345969388">0345 969 388</a></li>
-              <li>✉️ <a href="mailto:officemanager@wewin.edu.vn">officemanager@wewin.edu.vn</a></li>
+              <li>
+                ☎️ <a href="tel:0345969388">0345 969 388</a>
+              </li>
+              <li>
+                ✉️{" "}
+                <a href="mailto:officemanager@wewin.edu.vn">
+                  officemanager@wewin.edu.vn
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -94,11 +103,26 @@ export default function Footer() {
             </h3>
 
             <div className="flex flex-wrap gap-4 justify-start">
-              <SocialButton href="https://wewin.edu.vn" icon="https://img.icons8.com/fluency/48/domain.png" />
-              <SocialButton href="https://www.facebook.com/winwineducation" icon="https://img.icons8.com/color/48/facebook-new.png" />
-              <SocialButton href="https://www.tiktok.com/@wewin.education.vn" icon="https://img.icons8.com/color/48/tiktok--v1.png" />
-              <SocialButton href="https://www.youtube.com/@wewin.education" icon="https://img.icons8.com/color/48/youtube-play.png" />
-              <SocialButton href="mailto:officemanager@wewin.edu.vn" icon="https://img.icons8.com/color/48/gmail--v1.png" />
+              <SocialButton
+                href="https://wewin.edu.vn"
+                icon="https://img.icons8.com/fluency/48/domain.png"
+              />
+              <SocialButton
+                href="https://www.facebook.com/winwineducation"
+                icon="https://img.icons8.com/color/48/facebook-new.png"
+              />
+              <SocialButton
+                href="https://www.tiktok.com/@wewin.education.vn"
+                icon="https://img.icons8.com/color/48/tiktok--v1.png"
+              />
+              <SocialButton
+                href="https://www.youtube.com/@wewin.education"
+                icon="https://img.icons8.com/color/48/youtube-play.png"
+              />
+              <SocialButton
+                href="mailto:officemanager@wewin.edu.vn"
+                icon="https://img.icons8.com/color/48/gmail--v1.png"
+              />
             </div>
           </div>
         </div>
@@ -109,13 +133,17 @@ export default function Footer() {
             <div className="w-full border-t border-white/20"></div>
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-linear-to-br from-[#0E4BA9] to-[#00A6FB] px-3 text-[#FFE08A]">⭐</span>
+            <span className="bg-linear-to-br from-[#0E4BA9] to-[#00A6FB] px-3 text-[#FFE08A]">
+              ⭐
+            </span>
           </div>
         </div>
 
         {/* Copyright */}
         <p className="text-center text-sm opacity-80">
-          © {new Date().getFullYear()} <span className="font-semibold text-[#FFE08A]">WeWIN HTO</span>. All rights reserved.
+          © {new Date().getFullYear()}{" "}
+          <span className="font-semibold text-[#FFE08A]">WeWIN HTO</span>. All
+          rights reserved.
         </p>
       </div>
     </motion.footer>
