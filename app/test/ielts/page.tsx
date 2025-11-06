@@ -55,7 +55,6 @@ export default function IELTSPage() {
         // ⚙️ 1. Check localStorage
         const savedQuestions = localStorage.getItem("ielts_questions");
         if (savedQuestions) {
-          console.log("✅ Loaded saved IELTS questions");
           setQuestions(JSON.parse(savedQuestions));
           setLoadingQuestions(false);
           return;
@@ -69,7 +68,6 @@ export default function IELTSPage() {
 
         // ⚙️ 3. Save to localStorage for persistence
         localStorage.setItem("ielts_questions", JSON.stringify(data));
-        console.log("💾 New IELTS questions saved");
       } catch (err) {
         console.error("❌ Error loading questions:", err);
       } finally {
@@ -86,7 +84,6 @@ export default function IELTSPage() {
       setBlobURL(JSON.parse(savedAudio));
       const parts = Object.keys(JSON.parse(savedAudio)).map((p) => Number(p));
       setRecordedParts(parts);
-      console.log("🎧 Restored recorded parts:", parts);
     }
   }, []);
 
@@ -96,7 +93,6 @@ export default function IELTSPage() {
     script.src =
       "https://cdn.jsdelivr.net/gh/mattdiamond/Recorderjs@master/dist/recorder.js";
     script.async = true;
-    script.onload = () => console.log("✅ Recorder.js loaded");
     document.body.appendChild(script);
   }, []);
 
@@ -254,7 +250,7 @@ export default function IELTSPage() {
               ? "bg-gray-400 cursor-not-allowed w-14 h-14"
               : isRecording
               ? "bg-red-500 hover:bg-red-600 w-16 h-16"
-              : "bg-gradient-to-r from-[#0E4BA9] to-[#00A6FB] hover:opacity-90 w-14 h-14"
+              : "bg-linear-to-r from-[#0E4BA9] to-[#00A6FB] hover:opacity-90 w-14 h-14"
           }`}
         >
           {isUploading ? (
@@ -309,7 +305,7 @@ export default function IELTSPage() {
   // 🌊 1️⃣ Đang tải đề thi với logo xoay tròn
   if (status === "loading" || loadingQuestions)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(90vh-80px)] bg-gradient-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend] text-center">
+      <div className="flex flex-col items-center justify-center min-h-[calc(90vh-80px)] bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend] text-center">
         <motion.img
           src="/logo.png"
           alt="WeWIN Logo"
@@ -334,7 +330,7 @@ export default function IELTSPage() {
   // 🔐 2️⃣ Chưa đăng nhập
   if (!session)
     return (
-      <div className="min-h-[calc(90vh-80px)] flex items-center justify-center bg-gradient-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend]">
+      <div className="min-h-[calc(90vh-80px)] flex items-center justify-center bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend]">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -355,7 +351,7 @@ export default function IELTSPage() {
           <p className="text-gray-600 mb-6">Please log in to begin your test</p>
           <a
             href="/login"
-            className="px-6 py-3 rounded-full bg-gradient-to-r from-[#0E4BA9] to-[#00A6FB] text-white font-medium shadow hover:opacity-90 transition"
+            className="px-6 py-3 rounded-full bg-linear-to-r from-[#0E4BA9] to-[#00A6FB] text-white font-medium shadow hover:opacity-90 transition"
           >
             🔑 Log In Now
           </a>
@@ -366,7 +362,7 @@ export default function IELTSPage() {
   // ❌ 3️⃣ Lỗi tải đề thi
   if (!questions)
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-[#FCE8E8] to-[#FFF5F5] font-[Lexend] text-center">
+      <div className="flex flex-col items-center justify-center h-screen bg-linear-to-b from-[#FCE8E8] to-[#FFF5F5] font-[Lexend] text-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -395,7 +391,7 @@ export default function IELTSPage() {
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-400 text-white rounded-full shadow hover:opacity-90 transition"
+          className="px-6 py-3 bg-linear-to-r from-red-500 to-pink-400 text-white rounded-full shadow hover:opacity-90 transition"
         >
           🔁 Retry
         </button>
@@ -403,7 +399,7 @@ export default function IELTSPage() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#EAF4FF] to-[#F9FAFB] text-center font-[Lexend] px-4 py-10">
+    <div className="min-h-screen bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] text-center font-[Lexend] px-4 py-10">
       <h1 className="text-4xl font-bold text-[#0E4BA9] mb-3">
         🎙️ IELTS Speaking Test
       </h1>

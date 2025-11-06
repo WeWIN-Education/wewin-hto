@@ -5,8 +5,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-console.log(openai);
-
 export async function GET() {
   try {
     const prompt = `

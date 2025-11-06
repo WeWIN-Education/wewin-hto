@@ -58,7 +58,6 @@ async function refreshAccessToken(token: JWT) {
     const refreshed = await res.json();
     if (!res.ok) throw refreshed;
 
-    console.log("🔄 Google Access Token refreshed!");
     return {
       ...token,
       accessToken: refreshed.access_token,
