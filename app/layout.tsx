@@ -21,12 +21,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${lexend.className} antialiased bg-[#F9FAFB]`}>
-        {/* ✅ Provider client nằm riêng, nên layout vẫn là server */}
+    <html lang="en" className="h-full">
+      <body
+        className={`${lexend.className} antialiased bg-[#F9FAFB] flex flex-col min-h-screen`}
+      >
         <Providers>
           <Navbar />
-          {children}
+
+          {/* 👇 Phần nội dung chiếm không gian còn lại */}
+          <main className="grow">{children}</main>
+
           <Footer />
         </Providers>
       </body>
