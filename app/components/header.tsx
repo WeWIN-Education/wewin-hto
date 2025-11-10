@@ -74,7 +74,7 @@ export default function Navbar() {
                 <Link href={Routes.HOME} className="ml-2">
                   <motion.span
                     whileHover={{ scale: 1.05 }}
-                    className="text-xl font-bold tracking-wide text-[#FFE08A] drop-shadow-lg transition-all hidden sm:block"
+                    className="text-xl font-bold tracking-wide text-[#E4C28E] drop-shadow-lg transition-all hidden sm:block"
                     style={{
                       textShadow: "0 2px 8px rgba(0,0,0,0.3)",
                     }}

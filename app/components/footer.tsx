@@ -54,7 +54,7 @@ export default function Footer() {
             </motion.div>
 
             <div className="text-center lg:text-center w-full">
-              <h2 className="text-lg lg:text-xl font-bold text-[#FFE08A] mb-1 tracking-wide">
+              <h2 className="text-lg lg:text-xl font-bold text-[#E4C28E] mb-1 tracking-wide">
                 WeWIN Education
               </h2>
               <p className="text-xs lg:text-sm opacity-90">
@@ -65,17 +65,17 @@ export default function Footer() {
 
           {/* 🔹 Giữa: Liên hệ (Compact trên mobile) */}
           <div className="flex-1 w-full bg-white/5 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-            <h3 className="text-sm lg:text-base font-semibold text-[#FFE08A] mb-2 lg:mb-3 uppercase tracking-wider flex justify-center lg:justify-start items-center gap-2">
+            <h3 className="text-sm lg:text-base font-semibold text-[#E4C28E] mb-2 lg:mb-3 uppercase tracking-wider flex justify-center lg:justify-start items-center gap-2">
               📍 Liên hệ
             </h3>
             <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm opacity-90">
               <li>292B Nơ Trang Long, P.12, Bình Thạnh, TP.HCM</li>
               <li>
-                ☎️ <a href="tel:0345969388" className="hover:text-[#FFE08A] transition-colors">0345 969 388</a>
+                ☎️ <a href="tel:0345969388" className="hover:text-[#E4C28E] transition-colors">0345 969 388</a>
               </li>
               <li>
                 ✉️{" "}
-                <a href="mailto:officemanager@wewin.edu.vn" className="hover:text-[#FFE08A] transition-colors break-all">
+                <a href="mailto:officemanager@wewin.edu.vn" className="hover:text-[#E4C28E] transition-colors break-all">
                   officemanager@wewin.edu.vn
                 </a>
               </li>
@@ -84,7 +84,7 @@ export default function Footer() {
 
           {/* 🔹 Phải: Kết nối (Compact trên mobile) */}
           <div className="flex-1 w-full bg-white/5 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-            <h3 className="text-sm lg:text-base font-semibold text-[#FFE08A] mb-2 lg:mb-3 uppercase tracking-wider flex justify-center lg:justify-start items-center gap-2">
+            <h3 className="text-sm lg:text-base font-semibold text-[#E4C28E] mb-2 lg:mb-3 uppercase tracking-wider flex justify-center lg:justify-start items-center gap-2">
               🌐 Kết nối
             </h3>
             <div className="flex flex-wrap gap-2 lg:gap-4 justify-center lg:justify-start">
@@ -127,7 +127,7 @@ export default function Footer() {
         {/* --- Copyright --- */}
         <p className="text-center text-xs lg:text-sm opacity-80">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold text-[#FFE08A]">WeWIN HTO</span>. All rights reserved.
+          <span className="font-semibold text-[#E4C28E]">WeWIN HTO</span>. All rights reserved.
         </p>
       </div>
     </motion.footer>

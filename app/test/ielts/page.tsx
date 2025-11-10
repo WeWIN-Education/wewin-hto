@@ -6,6 +6,7 @@ import { InputField } from "@/app/components/input";
 import ReadingSection from "./components/ReadingSection";
 import WritingSection from "./components/WritingSection";
 import SpeakingSection from "./components/SpeakingSection";
+import GrammarSection from "./components/GrammarSection";
 
 interface UserInfo {
   fullName: string;
@@ -20,7 +21,7 @@ interface UserInfo {
   studyTime: string;
 }
 
-type Stage = "form" | "reading" | "writing" | "speaking" | "done";
+type Stage = "form" | "grammar" | "reading" | "writing" | "speaking" | "done";
 
 export default function IELTSPage() {
   const [stage, setStage] = useState<Stage>("form");
@@ -53,7 +54,7 @@ export default function IELTSPage() {
         "❗ Vui lòng điền đầy đủ thông tin trước khi bắt đầu bài thi!"
       );
     localStorage.setItem("ielts_userInfo", JSON.stringify(userInfo));
-    setStage("reading");
+    setStage("grammar"); // 🔹 chuyển sang grammar trước
   };
 
   const handleNext = (next: Stage) => setStage(next);
@@ -61,6 +62,16 @@ export default function IELTSPage() {
   /* =========================
      🧩 Flow các phần thi
   ========================== */
+
+  if (stage === "grammar")
+    return (
+      <GrammarSection
+        onNext={() => {
+          alert("✅ Đã lưu phần Grammar! Chuyển sang phần Reading...");
+          handleNext("reading");
+        }}
+      />
+    );
 
   if (stage === "reading")
     return (
@@ -152,7 +163,8 @@ export default function IELTSPage() {
                 Đảm bảo <b>micro </b> hoạt động tốt.
               </li>
               <li>
-                Khi bấm <b>"Bắt đầu kiểm tra"</b>, hệ thống sẽ ghi nhận thông tin.
+                Khi bấm <b>"Bắt đầu kiểm tra"</b>, hệ thống sẽ ghi nhận thông
+                tin.
               </li>
               <li>
                 Không <b>reload trang</b> trong khi làm bài.

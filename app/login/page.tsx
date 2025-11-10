@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(90vh-80px)]  bg-gradient-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend]">
+      <div className="flex flex-col items-center justify-center min-h-[calc(90vh-80px)]  bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend]">
         <motion.img
           src="/logo.png"
           alt="WeWIN Logo"
@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   // 🧭 Giao diện login mặc định (đẹp hơn, to hơn, chuyên nghiệp hơn)
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(90vh-80px)]  bg-gradient-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend]">
+    <div className="flex flex-col items-center justify-center min-h-[calc(90vh-80px)]  bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend]">
       <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -61,7 +61,7 @@ export default function LoginPage() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => signIn("google")}
-          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#0E4BA9] to-[#00A6FB] text-white py-4 rounded-full font-medium text-lg shadow-lg hover:brightness-110 transition-all"
+          className="w-full flex items-center justify-center gap-3 bg-linear-to-r from-[#0E4BA9] to-[#00A6FB] text-white py-4 rounded-full font-medium text-lg shadow-lg hover:brightness-110 transition-all"
         >
           <span className="text-2xl"></span> Đăng nhập bằng Google
         </motion.button>
