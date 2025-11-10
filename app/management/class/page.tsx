@@ -12,10 +12,8 @@ const CLASS_HEADERS = [
   "ID",
   "Class Name",
   "Category",
-  "Teacher 1",
-  "Teacher 2",
-  "TA 1",
-  "TA 2",
+  "Teachers",
+  "TA",
   "Schedule",
   "Students",
   "Actions",
@@ -125,16 +123,39 @@ export default function ClassPage() {
                   }`}
                 >
                   <td className="px-6 py-4 text-center">{cls.id}</td>
-                  <td className="px-6 py-6 font-semibold flex items-center gap-2">
-                    <Users className="w-4 h-4 text-[#0E4BA9]" />
-                    {cls.name}
+                  <td className="px-6 py-8 font-semibold flex justify-center items-center gap-2 text-center">
+                    <Users className="w-5 h-5 text-[#0E4BA9]" />
+                    <span>{cls.name}</span>
                   </td>
-                  <td className="px-6 py-4">{cls.category}</td>
-                  <td className="px-6 py-4">{cls.teacher1}</td>
-                  <td className="px-6 py-4">{cls.teacher2 || "-"}</td>
-                  <td className="px-6 py-4">{cls.ta1 || "-"}</td>
-                  <td className="px-6 py-4">{cls.ta2 || "-"}</td>
-                  <td className="px-6 py-4 text-gray-700 align-top">
+                  <td className="px-6 py-4 text-center">{cls.category}</td>
+                  {/* 🔹 Gộp Teachers */}
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex flex-col items-center">
+                      <span className="font-medium text-[#0E4BA9]">
+                        {cls.teacher1 || "-"}
+                      </span>
+                      {cls.teacher2 && (
+                        <span className="font-medium text-[#0E4BA9]">
+                          {cls.teacher2}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* 🔹 Gộp TAs */}
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex flex-col items-center">
+                      <span className="font-medium text-[#0E4BA9]">
+                        {cls.ta1 || "-"}
+                      </span>
+                      {cls.ta2 && (
+                        <span className="font-medium text-[#0E4BA9]">
+                          {cls.ta2}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-6 text-gray-700 align-top text-center">
                     <div className="inline-flex items-start gap-2">
                       <Clock className="w-4 h-4 text-[#0E4BA9] mt-0.5" />
                       <div className="flex flex-col leading-tight">
