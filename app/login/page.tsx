@@ -4,6 +4,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { Routes } from "../constants/routes";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -11,7 +12,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/test/ielts");
+      router.push(Routes.TEST_IELTS);
     }
   }, [status, router]);
 
