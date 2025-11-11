@@ -2,6 +2,7 @@
 export const Routes = {
   HOME: "/",
   TEST_IELTS: "/test/ielts",
-  MANAGE_CLASS: "/management/class",
-  MANAGE_STUDENT: "/management/student",
+  MANAGE_CLASS: "/class",
+  MANAGE_CLASS_CATEGORY: "/class/category",
+  MANAGE_STUDENT: "/student",
 };

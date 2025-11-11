@@ -5,19 +5,21 @@ import Link from "next/link";
 import React from "react";
 
 interface DropdownItem {
-  href: string;
+  href?: string;
   label: string;
+  children?: DropdownItem[];
 }
 
 interface DropdownProps {
   title: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   items: DropdownItem[];
 }
 
 export default function Dropdown({ title, icon, items }: DropdownProps) {
   return (
     <div className="relative group">
+      {/* 🔹 Main button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -38,6 +40,7 @@ export default function Dropdown({ title, icon, items }: DropdownProps) {
         </svg>
       </motion.button>
 
+      {/* 🔹 First-level dropdown */}
       <motion.div
         initial={{ opacity: 0, y: -15, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -51,22 +54,59 @@ export default function Dropdown({ title, icon, items }: DropdownProps) {
         }}
       >
         {items.map((item) => (
-          <motion.div
-            key={item.href}
-            whileHover={{
-              scale: 1.02,
-              backgroundColor: "rgba(0, 166, 251, 0.06)",
-              x: 6,
-            }}
-            transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          >
-            <Link
-              href={item.href}
-              className="block px-5 py-3 text-[#0E4BA9] font-semibold border-b border-blue-50 last:border-0"
-            >
-              {item.label}
-            </Link>
-          </motion.div>
+          <div key={item.label} className="relative group/item">
+            {/* Item chính */}
+            {item.href ? (
+              <Link
+                href={item.href}
+                className="block px-5 py-3 text-[#0E4BA9] font-semibold border-b border-blue-50 
+                           last:border-0 hover:bg-[#E6F4FF]"
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <div className="flex justify-between items-center px-5 py-3 text-[#0E4BA9] 
+                              font-semibold border-b border-blue-50 last:border-0 hover:bg-[#E6F4FF] 
+                              cursor-default">
+                <span>{item.label}</span>
+                {item.children && (
+                  <svg
+                    className="w-3.5 h-3.5 text-[#0E4BA9]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                )}
+              </div>
+            )}
+
+            {/* 🔹 Submenu (second-level) */}
+            {item.children && (
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute top-0 left-full ml-2 w-52 bg-white/95 rounded-xl shadow-lg 
+                           border border-blue-100 opacity-0 invisible 
+                           group-hover/item:opacity-100 group-hover/item:visible 
+                           transition-all duration-300 z-50 backdrop-blur-md"
+              >
+                {item.children.map((child) => (
+                  <Link
+                    key={child.href}
+                    href={child.href!}
+                    className="block px-5 py-3 text-[#0E4BA9] font-semibold border-b border-blue-50 
+                               last:border-0 hover:bg-[#E6F4FF]"
+                  >
+                    {child.label}
+                  </Link>
+                ))}
+              </motion.div>
+            )}
+          </div>
         ))}
       </motion.div>
     </div>

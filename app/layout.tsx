@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import Providers from "./components/providers";
-import Navbar from "./components/header";
-import Footer from "./components/footer";
+import ProvidersLayout from "./components/ProvidersLayout";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -25,13 +24,9 @@ export default function RootLayout({
       <body
         className={`${lexend.className} antialiased bg-[#F9FAFB] flex flex-col min-h-screen`}
       >
+        {/* ✅ Wrap toàn app trong SessionProvider */}
         <Providers>
-          <Navbar />
-
-          {/* 👇 Phần nội dung chiếm không gian còn lại */}
-          <main className="grow">{children}</main>
-
-          <Footer />
+          <ProvidersLayout>{children}</ProvidersLayout>
         </Providers>
       </body>
     </html>

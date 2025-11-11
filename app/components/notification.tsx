@@ -39,7 +39,7 @@ export default function Notification({
             animate={{ opacity: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, y: -20, x: 30 }}
             transition={{ duration: 0.3 }}
-            className={`flex items-start gap-3 text-white ${bgColors[type]} shadow-lg rounded-xl px-5 py-4 w-72`}
+            className={`flex items-center gap-3 text-white ${bgColors[type]} shadow-lg rounded-xl px-5 py-4 w-auto max-w-[90vw] whitespace-nowrap`}
           >
             <div className="flex-1 text-sm leading-relaxed">{message}</div>
             <button

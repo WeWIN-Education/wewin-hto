@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Eye, Edit, Trash2, MoreVertical } from "lucide-react";
+import { Eye, Edit, Trash2, MoreVertical, AlertTriangle, Ban } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Class } from "@/app/constants/class";
 
@@ -11,7 +11,7 @@ interface MobileMenuProps {
   setOpenMenu: (id: string | null) => void;
   handleViewClass: (cls: Class) => void;
   handleEditClass: (cls: Class) => void;
-  handleDeleteClass: (cls: Class) => void;
+  handleCancelClass: (cls: Class) => void;
 }
 
 export default function MobileMenu({
@@ -20,7 +20,7 @@ export default function MobileMenu({
   setOpenMenu,
   handleViewClass,
   handleEditClass,
-  handleDeleteClass,
+  handleCancelClass,
 }: MobileMenuProps) {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -76,12 +76,12 @@ export default function MobileMenu({
             </button>
             <button
               onClick={() => {
-                handleDeleteClass(cls);
+                handleCancelClass(cls);
                 setOpenMenu(null);
               }}
-              className="flex items-center gap-2 px-3 py-2 w-full hover:bg-red-50 text-red-600"
+              className="flex items-center gap-2 px-3 py-2 w-full hover:bg-orange-50 text-orange-600"
             >
-              <Trash2 size={16} /> Delete
+              <Ban size={16} /> Cancel
             </button>
           </motion.div>
         )}

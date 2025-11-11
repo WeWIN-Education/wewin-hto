@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Edit, Trash2, Eye, Plus, Users, Clock } from "lucide-react";
+import { Edit, Eye, Plus, Users, Clock, Ban } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StatusBadge } from "@/app/components/status";
-import { Class, initialData } from "@/app/constants/class";
+import { Class, colorClasses, initialData } from "@/app/constants/class";
 import MobileMenu from "@/app/components/mobileClassMenu";
+import Notification from "@/app/components/notification";
+import EditClassForm from "@/app/components/classForm";
+import { useRouter } from "next/navigation";
 
 // 🔹 Headers
 const CLASS_HEADERS = [
@@ -24,7 +27,16 @@ export default function ClassPage() {
   const [data, setData] = useState<Class[]>(initialData);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [editingClass, setEditingClass] = useState<Class | null>(null);
+  const [isAddMode, setIsAddMode] = useState(false);
+  const [notify, setNotify] = useState({
+    message: "",
+    type: "success" as "info" | "success" | "error",
+    visible: false,
+  });
+
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   // 🔹 Đóng menu khi click ra ngoài
   useEffect(() => {
@@ -47,31 +59,64 @@ export default function ClassPage() {
 
   // 🔹 CRUD Handlers
   const handleViewClass = (cls: Class) => {
-    alert(
-      `📘 ${cls.name}\nCategory: ${cls.category}\nTeacher: ${cls.teacher1}${
-        cls.teacher2 ? ` & ${cls.teacher2}` : ""
-      }\nTA: ${cls.ta1 || "-"}${cls.ta2 ? ` & ${cls.ta2}` : ""}\nSchedule: ${
-        cls.schedule
-      }\nStudents: ${cls.students.length}`
-    );
+    router.push(`/class/${cls.id}`);
   };
 
+  const handleAddClass = () => {
+    setIsAddMode(true);
+    setEditingClass({
+      id: "", // Sẽ tạo sau
+      name: "",
+      category: "",
+      teacher1: "",
+      teacher2: "",
+      ta1: "",
+      ta2: "",
+      schedule: "",
+      students: [],
+    });
+  };
+
+  // ✅ Sửa lại: mở form thay vì prompt
   const handleEditClass = (cls: Class) => {
-    const newName = prompt("✏️ Edit class name:", cls.name);
-    if (newName?.trim()) {
-      setData((prev) =>
-        prev.map((c) => (c.id === cls.id ? { ...c, name: newName.trim() } : c))
-      );
-    }
+    setEditingClass(cls);
   };
 
-  const handleDeleteClass = (cls: Class) => {
-    if (confirm(`🗑 Delete class "${cls.name}"?`)) {
-      setData((prev) => prev.filter((c) => c.id !== cls.id));
-      setExpanded((prev) => {
-        const next = new Set(prev);
-        next.delete(cls.id);
-        return next;
+  const handleSaveForm = (updated: Class) => {
+    if (isAddMode) {
+      const newClass = {
+        ...updated,
+        id: `CLS-${data.length + 1}`,
+      };
+      setData((prev) => [...prev, newClass]);
+      setNotify({
+        message: `✅ Class “${newClass.name}” added successfully!`,
+        type: "success",
+        visible: true,
+      });
+    } else {
+      setData((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+      setNotify({
+        message: `✅ Class “${updated.name}” updated successfully!`,
+        type: "success",
+        visible: true,
+      });
+    }
+
+    setEditingClass(null);
+    setIsAddMode(false);
+  };
+  const handleCancelClass = (cls: Class) => {
+    if (confirm(`⚠️ Cancel class "${cls.name}"?`)) {
+      // ✅ Có thể chỉ cập nhật trạng thái thay vì xóa hẳn
+      setData((prev) =>
+        prev.map((c) => (c.id === cls.id ? { ...c, status: "Cancelled" } : c))
+      );
+
+      setNotify({
+        message: `⚠️ Class "${cls.name}" has been cancelled successfully!`,
+        type: "info",
+        visible: true,
       });
     }
   };
@@ -80,14 +125,21 @@ export default function ClassPage() {
   // ✨ RENDER SECTION
   // ---------------------------
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-cyan-50 to-white p-4 sm:p-8 font-[Lexend]">
+    <div className="min-h-[calc(80vh-60px)] bg-linear-to-br from-blue-50 via-cyan-50 to-white p-4 sm:p-8 font-[Lexend]">
+      <Notification
+        message={notify.message}
+        type={notify.type}
+        visible={notify.visible}
+        onClose={() => setNotify((p) => ({ ...p, visible: false }))}
+      />
+
       {/* 🔹 Header */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0E4BA9] drop-shadow-sm">
           📚 Class Management
         </h1>
         <button
-          onClick={() => alert("🚧 Add class feature coming soon!")}
+          onClick={handleAddClass}
           className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 
                      rounded-xl bg-linear-to-r from-[#0E4BA9] to-[#00A6FB]
                      text-white font-semibold shadow-md hover:shadow-lg 
@@ -187,13 +239,12 @@ export default function ClassPage() {
                       {[
                         { icon: Eye, color: "blue", fn: handleViewClass },
                         { icon: Edit, color: "yellow", fn: handleEditClass },
-                        { icon: Trash2, color: "red", fn: handleDeleteClass },
+                        { icon: Ban, color: "orange", fn: handleCancelClass },
                       ].map(({ icon: Icon, color, fn }) => (
                         <button
                           key={color}
                           onClick={() => fn(cls)}
-                          className={`p-2 rounded-lg text-white shadow-sm 
-                                      bg-${color}-500 hover:bg-${color}-600 transition`}
+                          className={`p-2 rounded-lg text-white shadow-sm transition ${colorClasses[color]}`}
                         >
                           <Icon size={18} />
                         </button>
@@ -261,8 +312,8 @@ export default function ClassPage() {
                                             action: "Edit",
                                           },
                                           {
-                                            icon: Trash2,
-                                            color: "red",
+                                            icon: Ban,
+                                            color: "orange",
                                             action: "Delete",
                                           },
                                         ].map(
@@ -299,6 +350,20 @@ export default function ClassPage() {
         </table>
       </div>
 
+      <AnimatePresence>
+        {editingClass && (
+          <EditClassForm
+            cls={editingClass}
+            isAddMode={isAddMode}
+            onSave={handleSaveForm}
+            onCancel={() => {
+              setEditingClass(null);
+              setIsAddMode(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* 🔹 Mobile View */}
       <div className="block md:hidden space-y-4">
         {data.map((cls) => (
@@ -326,7 +391,7 @@ export default function ClassPage() {
                 setOpenMenu={setOpenMenu}
                 handleViewClass={handleViewClass}
                 handleEditClass={handleEditClass}
-                handleDeleteClass={handleDeleteClass}
+                handleCancelClass={handleCancelClass}
               />
             </div>
 
@@ -340,8 +405,20 @@ export default function ClassPage() {
                 🧑‍💼 {cls.ta1 || "-"}
                 {cls.ta2 && ` & ${cls.ta2}`}
               </p>
-              <p className="flex items-center gap-2">
-                <Clock size={14} /> {cls.schedule}
+              <p className="flex items-center gap-1 flex-wrap text-sm text-gray-800">
+                <Clock size={14} className="text-[#0E4BA9] mr-1" />
+                {Array.isArray(cls.schedule) ? (
+                  cls.schedule.map((slot, idx) => (
+                    <span key={idx} className="text-gray-800">
+                      {slot}{" "}
+                      {idx < cls.schedule.length - 1 && (
+                        <span className=" text-gray-400">-</span> // 👈 giảm khoảng cách
+                      )}
+                    </span>
+                  ))
+                ) : (
+                  <span>{cls.schedule}</span>
+                )}
               </p>
               <p className="text-[#0E4BA9] font-semibold mt-2">
                 👥 {cls.students.length} students

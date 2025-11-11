@@ -2,10 +2,11 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import React from "react";
 
 interface SectionItem {
   href: string;
-  icon: string;
+  icon: React.ReactNode;
   label: string;
 }
 
