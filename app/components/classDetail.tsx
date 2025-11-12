@@ -1,4 +1,12 @@
-import { ArrowLeft, Calendar, Eye, Edit, Ban, BookOpen, ExternalLink } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Eye,
+  Edit,
+  Ban,
+  BookOpen,
+  ExternalLink,
+} from "lucide-react";
 
 export const ACTIONS = [
   { icon: Eye, color: "bg-blue-500 hover:bg-blue-600", label: "View" },
@@ -6,21 +14,20 @@ export const ACTIONS = [
   { icon: Ban, color: "bg-orange-500 hover:bg-orange-600", label: "Delete" },
 ];
 
-export const ROWS_PER_PAGE = [5, 10, 20, "all"] as const;
-
 // 🔹 Back Button
 export function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
       className="flex items-center gap-2 text-[#0E4BA9] hover:text-blue-700 mb-4 sm:mb-6 
-                 transition-all duration-200 hover:-translate-x-1"
+                 transition-all duration-200 hover:-translate-x-1 cursor-pointer"
     >
       <ArrowLeft className="w-5 h-5" />
       <span className="font-medium text-sm sm:text-base">Back to Classes</span>
     </button>
   );
 }
+
 
 // 🔹 Class Header
 export function ClassHeader({
@@ -33,9 +40,11 @@ export function ClassHeader({
   id: string;
 }) {
   return (
-    <div className="bg-gradient-to-r from-[#0E4BA9] to-blue-600 
+    <div
+      className="bg-linear-to-r from-[#0E4BA9] to-blue-600 
                     p-5 sm:p-8 text-white rounded-xl sm:rounded-2xl 
-                    flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                    flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
+    >
       <div className="flex-1 text-center sm:text-left">
         <h1 className="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2">{name}</h1>
         <p className="text-blue-100 text-base sm:text-lg">{category}</p>
@@ -75,10 +84,16 @@ export function StatCard({
         <div className={`${iconBg} p-2 sm:p-3 rounded-lg`}>
           <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </div>
-        <h3 className="text-base sm:text-lg font-bold text-gray-800">{title}</h3>
+        <h3 className="text-base sm:text-lg font-bold text-gray-800">
+          {title}
+        </h3>
       </div>
       <p className="text-3xl sm:text-4xl font-bold text-emerald-600">{value}</p>
-      {subtitle && <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">{subtitle}</div>}
+      {subtitle && (
+        <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">
+          {subtitle}
+        </div>
+      )}
     </div>
   );
 }
@@ -90,13 +105,17 @@ export function ScheduleCard({ schedule }: { schedule: string | string[] }) {
     : schedule.split(";").map((s) => s.trim());
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 
-                    rounded-xl p-4 sm:p-6 border border-blue-200 w-full">
+    <div
+      className="bg-linear-to-br from-blue-50 to-indigo-50 
+                    rounded-xl p-4 sm:p-6 border border-blue-200 w-full"
+    >
       <div className="flex items-center gap-3 mb-4">
         <div className="bg-blue-500 p-2 sm:p-3 rounded-lg">
           <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </div>
-        <h3 className="text-base sm:text-lg font-bold text-gray-800">Class Schedule</h3>
+        <h3 className="text-base sm:text-lg font-bold text-gray-800">
+          Class Schedule
+        </h3>
       </div>
       <div className="space-y-2 sm:space-y-3">
         {scheduleItems.map((time, index) => (
@@ -104,7 +123,9 @@ export function ScheduleCard({ schedule }: { schedule: string | string[] }) {
             key={index}
             className="bg-white rounded-lg p-2 sm:p-3 border-l-4 border-[#0E4BA9] shadow-sm"
           >
-            <p className="text-gray-800 font-semibold text-xs sm:text-sm">{time}</p>
+            <p className="text-gray-800 font-semibold text-xs sm:text-sm">
+              {time}
+            </p>
           </div>
         ))}
       </div>
@@ -132,7 +153,9 @@ export function StudentRow({
       <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm font-semibold text-gray-800">
         {student.name}
       </td>
-      <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm text-gray-600">{student.age}</td>
+      <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm text-gray-600">
+        {student.age}
+      </td>
       <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm text-gray-600">
         {student.gender}
       </td>
@@ -161,79 +184,6 @@ export function StudentRow({
         </div>
       </td>
     </tr>
-  );
-}
-
-// 🔹 Pagination
-export function Pagination({
-  currentPage,
-  totalPages,
-  startIndex,
-  endIndex,
-  totalStudents,
-  selectedRows,
-  onPrev,
-  onNext,
-  onRowsChange,
-}: any) {
-  return (
-    <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 w-full">
-      <p className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
-        Showing <span className="font-semibold">{startIndex + 1}</span>–
-        <span className="font-semibold">
-          {Math.min(endIndex, totalStudents)}
-        </span>{" "}
-        of <span className="font-semibold">{totalStudents}</span> students
-      </p>
-
-      <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-        <div className="flex items-center gap-1 sm:gap-2">
-          <label className="text-xs sm:text-sm font-medium text-gray-700">
-            Rows per page:
-          </label>
-          <select
-            value={selectedRows}
-            onChange={onRowsChange}
-            className="px-2 py-1 border border-gray-300 rounded-lg text-xs sm:text-sm 
-              focus:outline-none focus:ring-2 focus:ring-[#0E4BA9] text-black"
-          >
-            {ROWS_PER_PAGE.map((option) => (
-              <option key={option} value={option}>
-                {option === "all" ? "All" : option}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            onClick={onPrev}
-            disabled={currentPage === 1}
-            className={`px-3 py-1 sm:px-4 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm transition ${
-              currentPage === 1
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-[#0E4BA9] text-white hover:bg-blue-700"
-            }`}
-          >
-            Prev
-          </button>
-          <span className="text-xs sm:text-sm font-semibold text-gray-700">
-            {currentPage}/{totalPages}
-          </span>
-          <button
-            onClick={onNext}
-            disabled={currentPage === totalPages}
-            className={`px-3 py-1 sm:px-4 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm transition ${
-              currentPage === totalPages
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-[#0E4BA9] text-white hover:bg-blue-700"
-            }`}
-          >
-            Next
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -272,7 +222,7 @@ export default function LearningResources({
             href={r.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="block bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 
+            className="block bg-linear-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 
                        p-4 sm:p-5 hover:shadow-lg hover:scale-[1.02] transition-all"
           >
             <div className="flex items-center justify-between mb-2">

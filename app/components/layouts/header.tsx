@@ -40,7 +40,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -40 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r 
+            className="fixed top-0 left-0 right-0 z-50 bg-linear-to-r 
                        from-[#0E4BA9]/95 via-[#007BCE]/95 to-[#00A6FB]/95 
                        backdrop-blur-md shadow-md"
           >
@@ -101,7 +101,7 @@ function Logo() {
     <>
       <div className="relative group">
         <div
-          className="absolute inset-0 bg-gradient-to-r from-blue-300 to-cyan-300 
+          className="absolute inset-0 bg-linear-to-r from-blue-300 to-cyan-300 
                         rounded-full blur-md opacity-0 group-hover:opacity-50 
                         transition-opacity duration-300"
         />
@@ -116,7 +116,7 @@ function Logo() {
 
       <div className="relative group">
         <div
-          className="absolute inset-0 bg-gradient-to-r from-amber-300 to-yellow-400 
+          className="absolute inset-0 bg-linear-to-r from-amber-300 to-yellow-400 
                         rounded-full blur-md opacity-0 group-hover:opacity-50 
                         transition-opacity duration-300"
         />
@@ -178,7 +178,7 @@ function UserSection({ session, setMenuOpen }: any) {
                    backdrop-blur-md text-white border border-white/30 shadow-md"
       >
         <div
-          className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 
+          className="w-8 h-8 rounded-full bg-linear-to-br from-amber-400 to-yellow-500 
                         flex items-center justify-center text-white font-bold text-sm shadow-lg"
         >
           {session.user?.name?.charAt(0).toUpperCase()}
@@ -241,7 +241,7 @@ function MobileMenu({ menuOpen, setMenuOpen, session, isAdmin }: any) {
         animate={{ opacity: 1, height: "auto" }}
         exit={{ opacity: 0, height: 0 }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden bg-gradient-to-b 
+        className="md:hidden overflow-hidden bg-linear-to-b 
                    from-[#007BCE] to-[#00A6FB] border-t border-white/20"
       >
         <div className="px-6 py-6 space-y-4">
@@ -315,7 +315,7 @@ function MobileMenu({ menuOpen, setMenuOpen, session, isAdmin }: any) {
             ) : (
               <div className="space-y-3">
                 <div className="bg-white/10 rounded-lg px-4 py-3 flex items-center gap-3 border border-white/20">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-white font-bold shadow-lg">
+                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-white font-bold shadow-lg">
                     {session.user?.name?.charAt(0).toUpperCase()}
                   </div>
                   <span className="text-white font-semibold">

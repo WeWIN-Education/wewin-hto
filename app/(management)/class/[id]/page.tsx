@@ -8,11 +8,11 @@ import { Routes } from "@/app/constants/routes";
 import LearningResources, {
   BackButton,
   ClassHeader,
-  Pagination,
   ScheduleCard,
   StatCard,
   StudentRow,
 } from "@/app/components/classDetail";
+import { Pagination } from "@/app/components/pagination";
 
 export default function ClassDetailPage() {
   const router = useRouter();
@@ -21,11 +21,11 @@ export default function ClassDetailPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [studentsPerPage, setStudentsPerPage] = useState(5);
-  const [selectedRows, setSelectedRows] = useState<string | number>("5");
+  const [selectedRows, setSelectedRows] = useState<"all" | number>(5);
 
   if (!classData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-8 font-[Lexend]">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-50 p-8 font-[Lexend]">
         <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12 text-center max-w-md">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             Class Not Found
@@ -59,20 +59,16 @@ export default function ClassDetailPage() {
 
   const handlePrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
   const handleNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+
   const handleRowsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    if (val === "all") {
-      setStudentsPerPage(totalStudents);
-      setSelectedRows("all");
-    } else {
-      setStudentsPerPage(Number(val));
-      setSelectedRows(val);
-    }
+    const val = e.target.value === "all" ? "all" : Number(e.target.value);
+    setSelectedRows(val);
+    setStudentsPerPage(val === "all" ? totalStudents : Number(val));
     setCurrentPage(1);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 md:p-8 font-[Lexend]">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 md:p-8 font-[Lexend]">
       <div className="max-w-8xl mx-auto">
         {/* 🔹 Back Button */}
         <div className="mb-4 sm:mb-6">
@@ -109,7 +105,7 @@ export default function ClassDetailPage() {
               border="border-emerald-200"
             />
 
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
+            <div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-purple-500 p-3 rounded-lg">
                   <GraduationCap className="w-6 h-6 text-white" />
@@ -126,7 +122,7 @@ export default function ClassDetailPage() {
               )}
             </div>
 
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
+            <div className="bg-linear-to-br from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-amber-500 p-3 rounded-lg">
                   <UserCheck className="w-6 h-6 text-white" />
@@ -194,7 +190,7 @@ export default function ClassDetailPage() {
             {currentStudents.map((stu, i) => (
               <div
                 key={stu.id}
-                className="border border-blue-100 rounded-xl shadow-sm p-4 bg-gradient-to-br from-white to-blue-50"
+                className="border border-blue-100 rounded-xl shadow-sm p-4 bg-linear-to-br from-white to-blue-50"
               >
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-[#0E4BA9] font-semibold">
@@ -202,9 +198,7 @@ export default function ClassDetailPage() {
                   </h3>
                   <span className="text-sm text-gray-500">{stu.gender}</span>
                 </div>
-                <p className="text-sm text-gray-700 mb-1">
-                  🎂 Age: {stu.age}
-                </p>
+                <p className="text-sm text-gray-700 mb-1">🎂 Age: {stu.age}</p>
                 <p className="text-sm text-black">
                   <strong>Status:</strong>{" "}
                   <span
@@ -228,7 +222,6 @@ export default function ClassDetailPage() {
             startIndex={startIndex}
             endIndex={endIndex}
             totalStudents={totalStudents}
-            studentsPerPage={studentsPerPage}
             selectedRows={selectedRows}
             onPrev={handlePrev}
             onNext={handleNext}

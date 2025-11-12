@@ -162,8 +162,8 @@ export default function EditClassForm({
               className={`px-5 py-2 rounded-lg font-semibold hover:scale-[1.02] transition
                 ${
                   isAddMode
-                    ? "bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white"
-                    : "bg-gradient-to-r from-[#0E4BA9] to-[#00A6FB] text-white hover:from-[#0C3E8C] hover:to-[#0090E0]"
+                    ? "bg-linear-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white"
+                    : "bg-linear-to-r from-[#0E4BA9] to-[#00A6FB] text-white hover:from-[#0C3E8C] hover:to-[#0090E0]"
                 }
               `}
             >
