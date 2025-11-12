@@ -17,7 +17,7 @@ export default function NotFoundPage() {
   }, []);
 
   return (
-    <div className="min-h-[calc(90vh-80px)] flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 text-center px-4 sm:px-6 md:px-10 font-[Lexend] relative overflow-hidden">
+    <div className="min-h-[calc(90vh-80px)] flex flex-col justify-center items-center bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 text-center px-4 sm:px-6 md:px-10 font-[Lexend] relative overflow-hidden">
       {/* 🔹 Background animation */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -46,7 +46,7 @@ export default function NotFoundPage() {
           transition={{ duration: 0.8, ease: "backOut", delay: 0.2 }}
           className="mb-4 sm:mb-6 md:mb-8"
         >
-          <h1 className="text-6xl sm:text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 drop-shadow-lg">
+          <h1 className="text-6xl sm:text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 drop-shadow-lg">
             404
           </h1>
         </motion.div>
@@ -64,7 +64,7 @@ export default function NotFoundPage() {
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             className="flex justify-center mb-4 sm:mb-6 md:mb-8"
           >
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg">
+            <div className="bg-linear-to-br from-blue-500 to-indigo-600 text-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg">
               <Search className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
             </div>
           </motion.div>
@@ -98,7 +98,7 @@ export default function NotFoundPage() {
           >
             <a
               href="/"
-              className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 sm:px-10 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="group bg-linear-to-r from-blue-600 to-indigo-600 text-white px-6 sm:px-10 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               <Home className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               Trang chủ
