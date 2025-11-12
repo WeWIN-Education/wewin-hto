@@ -2,6 +2,7 @@
 export const Routes = {
   HOME: "/",
   TEST_IELTS: "/test/ielts",
+  RESOURCES_LISTS: "/resources",
   MANAGE_CLASS: "/class",
   MANAGE_CLASS_CATEGORY: "/class/category",
   MANAGE_STUDENT: "/student",

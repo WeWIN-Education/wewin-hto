@@ -35,7 +35,7 @@ export default function Sidebar() {
     <div
       className={`h-full transition-all duration-300 ease-in-out ${
         collapsed ? "w-20" : "w-72"
-      } bg-gradient-to-br from-[#0B4BA8] via-[#1565C0] to-[#1976D2]
+      } bg-linear-to-br from-[#0B4BA8] via-[#1565C0] to-[#1976D2]
         text-white shadow-2xl flex flex-col overflow-hidden`}
     >
       {/* 🔹 Header */}

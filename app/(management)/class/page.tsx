@@ -10,6 +10,7 @@ import Notification from "@/app/components/notification";
 import EditClassForm from "@/app/components/classForm";
 import { useRouter } from "next/navigation";
 import { Pagination, RowsPerPage } from "@/app/components/pagination";
+import { calculateAge } from "@/app/utils/date";
 
 const CLASS_HEADERS = [
   "ID",
@@ -317,7 +318,7 @@ export default function ClassPage() {
                                         <td className="px-5 py-3">
                                           {stu.name}
                                         </td>
-                                        <td className="px-5 py-3">{stu.age}</td>
+                                        <td className="px-5 py-3">{calculateAge(new Date(stu.dob))}</td>
                                         <td className="px-5 py-3">
                                           {stu.gender}
                                         </td>

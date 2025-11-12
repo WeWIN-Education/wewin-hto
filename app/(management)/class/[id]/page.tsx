@@ -13,6 +13,7 @@ import LearningResources, {
   StudentRow,
 } from "@/app/components/classDetail";
 import { Pagination } from "@/app/components/pagination";
+import { calculateAge } from "@/app/utils/date";
 
 export default function ClassDetailPage() {
   const router = useRouter();
@@ -198,7 +199,9 @@ export default function ClassDetailPage() {
                   </h3>
                   <span className="text-sm text-gray-500">{stu.gender}</span>
                 </div>
-                <p className="text-sm text-gray-700 mb-1">🎂 Age: {stu.age}</p>
+                <p className="text-sm text-gray-700 mb-1">
+                  🎂 Age: {calculateAge(new Date(stu.dob))}
+                </p>
                 <p className="text-sm text-black">
                   <strong>Status:</strong>{" "}
                   <span

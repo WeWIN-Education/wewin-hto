@@ -7,6 +7,7 @@ import {
   BookOpen,
   ExternalLink,
 } from "lucide-react";
+import { calculateAge } from "../utils/date";
 
 export const ACTIONS = [
   { icon: Eye, color: "bg-blue-500 hover:bg-blue-600", label: "View" },
@@ -20,14 +21,13 @@ export function BackButton({ onClick }: { onClick: () => void }) {
     <button
       onClick={onClick}
       className="flex items-center gap-2 text-[#0E4BA9] hover:text-blue-700 mb-4 sm:mb-6 
-                 transition-all duration-200 hover:-translate-x-1 cursor-pointer"
+                 transition-all duration-200 hover:-translate-x-1"
     >
       <ArrowLeft className="w-5 h-5" />
       <span className="font-medium text-sm sm:text-base">Back to Classes</span>
     </button>
   );
 }
-
 
 // 🔹 Class Header
 export function ClassHeader({
@@ -147,14 +147,14 @@ export function StudentRow({
         index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
       }`}
     >
-      <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm font-medium text-gray-600">
+      <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm font-medium text-[#0E4BA9]">
         {student.id}
       </td>
       <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm font-semibold text-gray-800">
         {student.name}
       </td>
       <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm text-gray-600">
-        {student.age}
+        {calculateAge(new Date(student.dob))}
       </td>
       <td className="py-3 px-3 sm:py-4 sm:px-4 text-xs sm:text-sm text-gray-600">
         {student.gender}
