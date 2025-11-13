@@ -2,7 +2,20 @@ import { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 
-/** ✅ Cấu hình NextAuth cho Google Login + Tự tạo tài khoản + Lưu userId */
+/** ---- TYPES FIX ---- */
+interface GoogleAccount {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+}
+
+interface GoogleProfile {
+  email?: string;
+  name?: string;
+  picture?: string;
+}
+
+/** NEXTAUTH FULL GOOGLE DRIVE + SHEETS + GMAIL */
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -10,8 +23,14 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope:
-            "openid email profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets",
+          scope: [
+            "openid",
+            "email",
+            "profile",
+            "https://www.googleapis.com/auth/drive.file",
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/gmail.send",
+          ].join(" "),
           access_type: "offline",
           prompt: "consent",
         },
@@ -20,55 +39,53 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    /** 🔹 JWT callback: lưu access token + refresh token + userId */
-    async jwt({ token, account, profile }: any) {
-      // Khi user login lần đầu
-      if (account && profile) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.expiresAt = Date.now() + account.expires_in * 1000;
+    /** JWT CALLBACK */
+    async jwt({ token, account, profile }) {
+      const acc = account as unknown as GoogleAccount | null;
+      const pf = profile as unknown as GoogleProfile | null;
+
+      if (acc && pf) {
+        token.accessToken = acc.access_token;
+        token.refreshToken = acc.refresh_token;
+        token.expiresAt = Date.now() + acc.expires_in * 1000;
 
         try {
-          // 🧠 Gọi API backend để tạo user mới nếu chưa tồn tại
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                email: profile.email,
-                name: profile.name,
-                image: profile.picture,
+                email: pf.email,
+                name: pf.name,
+                image: pf.picture,
               }),
             }
           );
 
-          if (!res.ok) throw new Error("Failed to sync user with backend");
           const data = await res.json();
-
-          // ✅ Lưu userId (hoặc email) từ backend vào token
-          token.userId = data.id || profile.email;
+          token.userId = data.id || pf.email;
         } catch (err) {
-          console.error("❌ Failed to create/find user in backend:", err);
-          token.userId = profile.email; // fallback nếu backend lỗi
+          console.error("User sync error:", err);
+          token.userId = pf.email;
         }
       }
 
-      // Nếu token chưa hết hạn → giữ nguyên
       if (Date.now() < (token.expiresAt as number)) return token;
 
-      // Hết hạn → gọi refreshAccessToken()
       return refreshAccessToken(token);
     },
 
-    /** 🔹 Session callback: truyền userId xuống client */
-    async session({ session, token }: any) {
-      session.accessToken = token.accessToken;
-      session.error = token.error;
+    /** SESSION CALLBACK */
+    async session({ session, token }) {
+      session.accessToken = token.accessToken as string;
 
-      // Gắn userId vào session.user
+      // FIX: đảm bảo session.error là string | undefined
+      session.error = (token.error as string) ?? undefined;
+
+      // FIX: đảm bảo session.user.id là string | undefined
       if (session.user) {
-        session.user.id = token.userId;
+        session.user.id = (token.userId as string) ?? undefined;
       }
 
       return session;
@@ -79,7 +96,7 @@ export const authOptions: NextAuthOptions = {
   pages: { signIn: "/login" },
 };
 
-/** 🔁 Refresh access token khi hết hạn */
+/** ---- REFRESH TOKEN ---- */
 async function refreshAccessToken(token: JWT) {
   try {
     const res = await fetch("https://oauth2.googleapis.com/token", {
@@ -103,7 +120,7 @@ async function refreshAccessToken(token: JWT) {
       refreshToken: refreshed.refresh_token ?? token.refreshToken,
     };
   } catch (err) {
-    console.error("❌ Token refresh error:", err);
+    console.error("Token refresh error:", err);
     return { ...token, error: "RefreshAccessTokenError" };
   }
 }

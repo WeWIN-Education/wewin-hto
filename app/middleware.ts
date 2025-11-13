@@ -8,5 +8,6 @@ export const config = {
     "/class/:path*",      // bảo vệ quản lý lớp
     "/student/:path*",    // bảo vệ quản lý học sinh
     "/management/:path*", // bảo vệ toàn bộ phần quản lý
+    "/test/:path*", // bảo vệ toàn bộ phần quản lý
   ],
 };

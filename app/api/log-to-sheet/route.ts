@@ -102,10 +102,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-export const handleLogout = () => {
-  localStorage.removeItem("ielts_questions");
-  localStorage.removeItem("ielts_uuid");
-  localStorage.removeItem("ielts_recordedFiles");
-  signOut();
-};

@@ -7,11 +7,11 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Routes } from "@/app/constants/routes";
 import Dropdown from "../dropdown";
-import { handleLogout } from "@/app/api/log-to-sheet/route";
 import Section from "../section";
 import { allowedEmails } from "@/app/constants/email";
 import { BookOpen, FolderOpen } from "lucide-react";
 import NavButton from "../navButton";
+import { handleLogout } from "@/app/api/auth/[...nextauth]/route";
 
 export default function Navbar() {
   const { data: session } = useSession();

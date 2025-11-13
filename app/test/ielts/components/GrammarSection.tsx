@@ -64,7 +64,10 @@ export default function GrammarSection({ onNext }: GrammarSectionProps) {
 
   const question = grammarQuestions[current];
 
-  const showNotification = (message: string, type: "info" | "success" | "error") => {
+  const showNotification = (
+    message: string,
+    type: "info" | "success" | "error"
+  ) => {
     setNotification({ visible: true, message, type });
   };
 
@@ -81,8 +84,11 @@ export default function GrammarSection({ onNext }: GrammarSectionProps) {
     if (current < grammarQuestions.length - 1) {
       setCurrent(current + 1);
     } else {
-      localStorage.setItem("grammarAnswers", JSON.stringify(answers));
-      showNotification("✅ Hoàn thành phần Grammar! Chuyển sang phần Reading...", "success");
+      localStorage.setItem("ielts_grammar", JSON.stringify(answers));
+      showNotification(
+        "✅ Hoàn thành phần Grammar! Chuyển sang phần Reading...",
+        "success"
+      );
       setTimeout(onNext, 2500);
     }
   };
@@ -105,7 +111,7 @@ export default function GrammarSection({ onNext }: GrammarSectionProps) {
           className="max-w-3xl w-full bg-white border border-[#B8D7F9]/60 rounded-3xl p-10 shadow-[0_8px_30px_rgba(14,75,169,0.1)] flex flex-col justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold text-[#0E4BA9] mb-4 text-center">
+            <h1 className="text-xl md:text-3xl font-bold text-[#0E4BA9] mb-4 text-center">
               🧠 Grammar Section — WeWIN HTO
             </h1>
             <p className="text-gray-600 text-center mb-6">
@@ -142,28 +148,51 @@ export default function GrammarSection({ onNext }: GrammarSectionProps) {
             </div>
           </div>
 
-          <div className="flex justify-between mt-10">
+          <div className="flex justify-between items-center mt-10 w-full">
+            {/* Nút Trở lại */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setCurrent(Math.max(0, current - 1))}
               disabled={current === 0}
-              className={`px-6 py-3 rounded-2xl font-semibold text-white shadow-md ${
-                current === 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-linear-to-r from-[#B8D7F9] to-[#7FB2F0]"
-              }`}
+              className={`
+      px-5 py-2.5 
+      rounded-2xl 
+      text-sm font-semibold text-white 
+      shadow-md 
+      whitespace-nowrap
+      ${
+        current === 0
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-gradient-to-r from-[#0185b9] to-[#0E4BA9]"
+      }
+    `}
             >
               ◀ Trở lại
             </motion.button>
 
+            {/* Spacer để đẩy 2 nút dạt ra giống hình */}
+            <div className="flex-1"></div>
+
+            {/* Nút Tiếp theo */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleNext}
-              className="px-8 py-3 rounded-2xl bg-linear-to-r from-[#0E4BA9] to-[#00A6FB] text-white font-bold shadow-md"
+              className="
+      px-5 py-2.5 
+      rounded-2xl 
+      bg-gradient-to-r from-[#0E4BA9] to-[#00A6FB]
+      text-white 
+      font-semibold 
+      text-sm 
+      shadow-md 
+      whitespace-nowrap
+    "
             >
-              {current === grammarQuestions.length - 1 ? "Hoàn thành" : "Tiếp theo ▶"}
+              {current === grammarQuestions.length - 1
+                ? "Hoàn thành"
+                : "Tiếp theo ▶"}
             </motion.button>
           </div>
         </motion.div>

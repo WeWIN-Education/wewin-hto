@@ -14,37 +14,33 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Metadata cho Google Drive
+    // ⭐ Luôn là WAV từ Recorder.js
+    const cleanMime = "audio/wav";
+    const ext = "wav";
+
     const metadata = {
-      name: `IELTS_${Date.now()}.wav`,
-      mimeType: "audio/wav",
+      name: `IELTS_${Date.now()}.${ext}`,
+      mimeType: cleanMime,
       parents: [folderId],
     };
 
-    // ✅ Tạo boundary thủ công
     const boundary = "-------314159265358979323846";
     const delimiter = `\r\n--${boundary}\r\n`;
     const close_delim = `\r\n--${boundary}--`;
 
-    // ✅ Convert file Blob thành ArrayBuffer
     const fileBuffer = Buffer.from(await file.arrayBuffer());
 
-    // ✅ Kết hợp metadata + file vào body
     const body = Buffer.concat([
       Buffer.from(
         `${delimiter}Content-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(
           metadata
         )}`
       ),
-      Buffer.from(
-        `${delimiter}Content-Type: audio/wav\r\n\r\n`,
-        "utf8"
-      ),
+      Buffer.from(`${delimiter}Content-Type: ${cleanMime}\r\n\r\n`, "utf8"),
       fileBuffer,
       Buffer.from(close_delim),
     ]);
 
-    // ✅ Gọi Google Drive API
     const res = await fetch(
       "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink",
       {
@@ -59,14 +55,11 @@ export async function POST(req: Request) {
 
     const data = await res.json();
 
-    if (!res.ok) {
-      console.error("❌ Upload lỗi:", data);
-      throw new Error(data.error?.message || "Upload thất bại");
-    }
+    if (!res.ok) throw new Error(data.error?.message || "Upload failed");
 
     return NextResponse.json({ success: true, data });
   } catch (err: any) {
-    console.error("❌ Lỗi Upload:", err);
+    console.error("❌ Upload error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

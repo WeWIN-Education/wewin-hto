@@ -7,6 +7,16 @@ import ReadingSection from "./components/ReadingSection";
 import WritingSection from "./components/WritingSection";
 import SpeakingSection from "./components/SpeakingSection";
 import GrammarSection from "./components/GrammarSection";
+import { formatDateFromInput, formatTimestamp } from "@/app/utils/format";
+import InputDate from "@/app/components/inputDate";
+
+import Notification from "@/app/components/notification";
+import { useNotification } from "@/app/utils/useNotification";
+import { useSession } from "next-auth/react";
+import { apiCall } from "@/app/utils/apiClient";
+import Timer from "@/app/components/timer";
+
+// 🔥 TIMER TÁCH RIÊNG
 
 interface UserInfo {
   fullName: string;
@@ -24,7 +34,11 @@ interface UserInfo {
 type Stage = "form" | "grammar" | "reading" | "writing" | "speaking" | "done";
 
 export default function IELTSPage() {
+  const { notify, visible, message, type, close } = useNotification();
+  const { data: session } = useSession();
+
   const [stage, setStage] = useState<Stage>("form");
+
   const [userInfo, setUserInfo] = useState<UserInfo>({
     fullName: "",
     birthDate: "",
@@ -38,8 +52,18 @@ export default function IELTSPage() {
     studyTime: "",
   });
 
+  /* ------------------------------------------------------------------
+      HANDLE INPUT
+  ------------------------------------------------------------------ */
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    if (name === "birthDate") {
+      const formatted = formatDateFromInput(value);
+      setUserInfo((prev) => ({ ...prev, birthDate: formatted }));
+      return;
+    }
+
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -48,264 +72,332 @@ export default function IELTSPage() {
     return String(val).trim() !== "";
   });
 
-  const handleStart = () => {
-    if (!isFormValid)
-      return alert(
-        "❗ Vui lòng điền đầy đủ thông tin trước khi bắt đầu bài thi!"
-      );
-    localStorage.setItem("ielts_userInfo", JSON.stringify(userInfo));
-    setStage("grammar"); // 🔹 chuyển sang grammar trước
+  /* ------------------------------------------------------------------
+      START TEST
+  ------------------------------------------------------------------ */
+  const handleStart = async () => {
+    if (!isFormValid) {
+      notify("❗ Vui lòng điền đầy đủ thông tin!", "error");
+      return;
+    }
+
+    const accessToken = session?.accessToken as string;
+    const sheetId = "1Jh_KKBMmUzE7cltx6ZdGeeJIvm2q6PbDlgn_INKNQAY";
+
+    try {
+      // 1️⃣ Kiểm tra đã thi chưa
+      const checkData = await apiCall<{ exists: boolean }>("/api/check-ielts", {
+        method: "POST",
+        body: {
+          accessToken,
+          sheetId,
+          email: userInfo.email,
+        },
+      });
+
+      if (checkData.exists) {
+        notify("⚠️ Bạn đã làm bài thi rồi! Không thể thi lại.", "error");
+        return;
+      }
+
+      // 2️⃣ Lưu thời gian bắt đầu
+      const date = formatTimestamp();
+
+      localStorage.setItem("ielts_startTime", date);
+      localStorage.setItem("ielts_userInfo", JSON.stringify(userInfo));
+      const startAt = Date.now();
+      localStorage.setItem("ielts_startAt", String(startAt));
+
+      // 3️⃣ Bắt đầu Grammar
+      setStage("grammar");
+      notify("🚀 Bắt đầu bài thi!", "success");
+    } catch (err: any) {
+      notify("❌ Lỗi khi kiểm tra thông tin thi!", "error");
+      console.error(err);
+    }
   };
 
   const handleNext = (next: Stage) => setStage(next);
 
-  /* =========================
-     🧩 Flow các phần thi
-  ========================== */
+  /* ------------------------------------------------------------------
+      TEST SECTIONS
+  ------------------------------------------------------------------ */
+  const TimerWrapper = () =>
+    stage !== "form" && (
+      <Timer
+        minutes={60}
+        onTimeout={() => {
+          notify("⏳ Hết giờ! Hệ thống sẽ tự động nộp bài.", "error");
+          setStage("done");
+        }}
+      />
+    );
 
   if (stage === "grammar")
     return (
-      <GrammarSection
-        onNext={() => {
-          alert("✅ Đã lưu phần Grammar! Chuyển sang phần Reading...");
-          handleNext("reading");
-        }}
-      />
+      <>
+        <Notification
+          visible={visible}
+          message={message}
+          type={type}
+          onClose={close}
+        />
+        <TimerWrapper />
+        <GrammarSection onNext={() => handleNext("reading")} />
+      </>
     );
 
   if (stage === "reading")
     return (
-      <ReadingSection
-        // ✅ Lưu dữ liệu và chuyển sang Writing
-        onNext={() => {
-          alert("✅ Đã lưu bài Reading! Chuyển sang phần Writing...");
-          handleNext("writing");
-        }}
-      />
+      <>
+        <Notification
+          visible={visible}
+          message={message}
+          type={type}
+          onClose={close}
+        />
+        <TimerWrapper />
+        <ReadingSection onNext={() => handleNext("writing")} />
+      </>
     );
 
   if (stage === "writing")
     return (
-      <WritingSection
-        // ✅ Lưu dữ liệu và chuyển sang Speaking
-        onNext={() => {
-          alert("✅ Đã lưu bài Writing! Chuyển sang phần Speaking...");
-          handleNext("speaking");
-        }}
-      />
+      <>
+        <Notification
+          visible={visible}
+          message={message}
+          type={type}
+          onClose={close}
+        />
+        <TimerWrapper />
+        <WritingSection
+          onNext={() => {
+            notify("Đã lưu Writing! Chuyển sang Speaking...", "success");
+            handleNext("speaking");
+          }}
+        />
+      </>
     );
 
   if (stage === "speaking")
-    return <SpeakingSection onFinish={() => handleNext("done")} />;
+    return (
+      <>
+        <Notification
+          visible={visible}
+          message={message}
+          type={type}
+          onClose={close}
+        />
+        <TimerWrapper />
+        <SpeakingSection onFinish={() => handleNext("done")} />
+      </>
+    );
 
   if (stage === "done")
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend] text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl font-bold text-[#0E4BA9] mb-4"
-        >
-          🎉 Hoàn tất bài thi IELTS!
-        </motion.h1>
-        <p className="text-gray-600">
-          Cảm ơn bạn <b>{userInfo.fullName}</b> đã hoàn thành bài thi thử của
-          WeWIN HTO.
-        </p>
-      </div>
+      <>
+        <Notification
+          visible={visible}
+          message={message}
+          type={type}
+          onClose={close}
+        />
+
+        <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend] text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl font-bold text-[#0E4BA9] mb-4"
+          >
+            🎉 Hoàn tất bài thi IELTS!
+          </motion.h1>
+          <p className="text-gray-600">
+            Cảm ơn bạn <b>{userInfo.fullName}</b> đã hoàn thành bài thi thử của
+            WeWIN HTO.
+          </p>
+        </div>
+      </>
     );
 
-  /* =========================
-     🧾 Form trước khi thi
-  ========================== */
+  /* ------------------------------------------------------------------
+      FORM BEFORE TEST
+  ------------------------------------------------------------------ */
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend] flex flex-col items-center justify-center px-4 py-10">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative max-w-3xl w-full bg-white/95 backdrop-blur-xl border border-[#B8D7F9]/70 rounded-3xl shadow-[0_8px_30px_rgba(14,75,169,0.1)] p-10 overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-linear-to-br from-[#e0f0fd] to-[#EAF4FF] opacity-90 rounded-3xl"></div>
+    <>
+      <Notification
+        visible={visible}
+        message={message}
+        type={type}
+        onClose={close}
+      />
 
-        <div className="relative z-10">
-          {/* Logo */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex justify-center mb-6"
-          >
-            <img
-              src="/logo.png"
-              alt="WeWIN Logo"
-              className="w-52 drop-shadow-md"
-            />
-          </motion.div>
+      <div className="min-h-screen bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend] flex flex-col items-center justify-center px-4 py-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative max-w-3xl w-full bg-white/95 backdrop-blur-xl border border-[#B8D7F9]/70 rounded-3xl shadow-[0_8px_30px_rgba(14,75,169,0.1)] p-10 overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-linear-to-br from-[#e0f0fd] to-[#EAF4FF] opacity-90 rounded-3xl"></div>
 
-          {/* Title */}
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#0E4BA9] mb-3 text-center">
-            IELTS Test — <span className="text-[#007BCE]">WeWIN HTO</span>
-          </h1>
+          <div className="relative z-10">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-6"
+            >
+              <img
+                src="/logo.png"
+                alt="WeWIN Logo"
+                className="w-52 drop-shadow-md"
+              />
+            </motion.div>
 
-          {/* Lưu ý */}
-          <div className="text-left bg-linear-to-r from-[#EAF4FF] to-[#F7FAFF] border border-[#B8D7F9]/60 rounded-2xl p-5 mb-8 shadow-inner">
-            <p className="font-semibold text-[#0E4BA9] mb-2">
-              📋 Lưu ý trước khi bắt đầu:
-            </p>
-            <ul className="list-disc list-inside space-y-1 text-gray-700 text-sm">
-              <li>
-                Bài kiểm tra gồm 3 phần: <b>Reading</b>, <b>Writing</b>,{" "}
-                <b>Speaking</b>.
-              </li>
-              <li>
-                Đảm bảo <b>micro </b> hoạt động tốt.
-              </li>
-              <li>
-                Khi bấm <b>"Bắt đầu kiểm tra"</b>, hệ thống sẽ ghi nhận thông
-                tin.
-              </li>
-              <li>
-                Không <b>reload trang</b> trong khi làm bài.
-              </li>
-            </ul>
-          </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-[#0E4BA9] mb-3 text-center">
+              IELTS Test — <span className="text-[#007BCE]">WeWIN HTO</span>
+            </h1>
 
-          {/* Form */}
-          <form className="text-left grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField
-              label="Họ & tên của Anh/Chị"
-              name="fullName"
-              value={userInfo.fullName}
-              onChange={handleChange}
-              required
-            />
-            <InputField
-              label="Ngày sinh"
-              name="birthDate"
-              type="date"
-              value={userInfo.birthDate}
-              onChange={handleChange}
-              required
-              onFocus={(e) => e.target.showPicker && e.target.showPicker()}
-            />
-            <InputField
-              label="Khu vực bạn đang học tập/làm việc"
-              name="location"
-              value={userInfo.location}
-              onChange={handleChange}
-              required
-              placeholder="VD: TP.HCM, Quận Bình Thạnh..."
-              fullWidth
-            />
-            <InputField
-              label="Số điện thoại của Anh/Chị"
-              name="phone"
-              type="tel"
-              value={userInfo.phone}
-              onChange={handleChange}
-              required
-            />
-            <InputField
-              label="Email"
-              name="email"
-              type="email"
-              value={userInfo.email}
-              onChange={handleChange}
-              required
-            />
-            <InputField
-              label="Tên nhân viên tư vấn cho Anh/Chị"
-              name="consultant"
-              value={userInfo.consultant}
-              onChange={handleChange}
-              required
-              fullWidth
-            />
+            {/* FORM INPUT */}
+            <form className="text-left grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InputField
+                label="Họ & tên"
+                name="fullName"
+                value={userInfo.fullName}
+                onChange={handleChange}
+                required
+              />
 
-            {/* Nhu cầu IELTS */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-[#0E4BA9] mb-3">
-                Nhu cầu IELTS của Anh/Chị{" "}
-                <span className="text-red-500">*</span>
-              </label>
-              <div className="flex flex-wrap gap-4">
-                {["Đi học", "Đi định cư", "Đi làm", "Khác"].map((option) => (
-                  <label
-                    key={option}
-                    className="flex items-center gap-2 bg-[#F7FAFF] border border-[#B8D7F9]/50 rounded-xl px-4 py-2 cursor-pointer hover:border-[#0E4BA9] transition-all"
+              <InputDate
+                label="Ngày sinh"
+                name="birthDate"
+                value={userInfo.birthDate}
+                required
+                onChange={(name, value) =>
+                  setUserInfo((prev) => ({ ...prev, [name]: value }))
+                }
+              />
+
+              <InputField
+                label="Khu vực học tập/làm việc"
+                name="location"
+                value={userInfo.location}
+                onChange={handleChange}
+                required
+                fullWidth
+              />
+
+              <InputField
+                label="Số điện thoại"
+                name="phone"
+                value={userInfo.phone}
+                onChange={handleChange}
+                required
+              />
+
+              <InputField
+                label="Email"
+                name="email"
+                value={userInfo.email}
+                onChange={handleChange}
+                required
+              />
+
+              <InputField
+                label="Nhân viên tư vấn"
+                name="consultant"
+                value={userInfo.consultant}
+                onChange={handleChange}
+                required
+                fullWidth
+              />
+
+              {/* Nhu cầu IELTS */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-[#0E4BA9] mb-3">
+                  Nhu cầu IELTS <span className="text-red-500">*</span>
+                </label>
+
+                <div className="flex flex-wrap gap-4">
+                  {["Đi học", "Đi định cư", "Đi làm", "Khác"].map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center gap-2 bg-[#F7FAFF] border border-[#B8D7F9]/50 rounded-xl px-4 py-2 cursor-pointer hover:border-[#0E4BA9]"
+                    >
+                      <input
+                        required
+                        type="radio"
+                        name="ieltsNeed"
+                        value={option}
+                        checked={userInfo.ieltsNeed === option}
+                        onChange={handleChange}
+                        className="accent-[#0E4BA9] w-4 h-4"
+                      />
+                      <span className="text-gray-700 font-medium">
+                        {option}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                {userInfo.ieltsNeed === "Khác" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="mt-4"
                   >
                     <input
-                      required
-                      type="radio"
-                      name="ieltsNeed"
-                      value={option}
-                      checked={userInfo.ieltsNeed === option}
+                      type="text"
+                      name="ieltsOther"
+                      value={userInfo.ieltsOther}
                       onChange={handleChange}
-                      className="accent-[#0E4BA9] w-4 h-4"
+                      placeholder="Vui lòng ghi rõ..."
+                      className="w-full px-4 py-3 border border-[#B8D7F9] rounded-xl"
+                      required
                     />
-                    <span className="text-gray-700 font-medium">{option}</span>
-                  </label>
-                ))}
+                  </motion.div>
+                )}
               </div>
 
-              {/* Nếu chọn Khác thì hiện ô nhập */}
-              {userInfo.ieltsNeed === "Khác" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="mt-4"
-                >
-                  <input
-                    type="text"
-                    name="ieltsOther"
-                    value={userInfo.ieltsOther}
-                    onChange={handleChange}
-                    placeholder="Vui lòng ghi rõ nhu cầu của bạn..."
-                    className="w-full px-4 py-3 border border-[#B8D7F9] rounded-xl bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0E4BA9] transition-all"
-                    required
-                  />
-                </motion.div>
-              )}
+              <InputField
+                label="Điểm tự đánh giá"
+                name="selfScore"
+                value={userInfo.selfScore}
+                onChange={handleChange}
+                required
+              />
+
+              <InputField
+                label="Thời gian học mỗi tuần"
+                name="studyTime"
+                value={userInfo.studyTime}
+                onChange={handleChange}
+                required
+              />
+            </form>
+
+            {/* BUTTON START */}
+            <div className="flex justify-center mt-8">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleStart}
+                className={`flex items-center gap-2 px-10 py-4 rounded-2xl text-white font-bold text-lg shadow-lg 
+                  ${
+                    isFormValid
+                      ? "bg-linear-to-r from-[#0E4BA9] to-[#00A6FB]"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
+              >
+                🚀 BẮT ĐẦU THI
+              </motion.button>
             </div>
-
-            <InputField
-              label="Theo Anh/Chị tự nhận xét, điểm IELTS của mình đang ở mấy chấm?"
-              name="selfScore"
-              value={userInfo.selfScore}
-              onChange={handleChange}
-              required
-              placeholder="VD: 5.0, 6.5, 7.0..."
-            />
-            <InputField
-              label="Một tuần, Anh/Chị bỏ ra bao nhiêu thời gian để học tiếng Anh?"
-              name="studyTime"
-              value={userInfo.studyTime}
-              onChange={handleChange}
-              required
-              placeholder="VD: 10 giờ/tuần, 2 giờ/ngày..."
-            />
-          </form>
-
-          {/* Nút bắt đầu thi */}
-          <div className="flex justify-center mt-8">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleStart}
-              className={`flex items-center gap-2 px-10 py-4 rounded-2xl text-white font-bold text-lg shadow-lg transition-all duration-300 ${
-                isFormValid
-                  ? "bg-linear-to-r from-[#0E4BA9] to-[#00A6FB] hover:shadow-xl"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
-            >
-              🚀 BẮT ĐẦU THI
-            </motion.button>
           </div>
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+    </>
   );
 }
