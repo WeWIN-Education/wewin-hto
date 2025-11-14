@@ -48,24 +48,37 @@ export async function evaluateWriting(essay: string) {
     messages: [
       {
         role: "system",
-        content: `You are an IELTS Writing examiner. You MUST respond ONLY with valid JSON.
+        content: `You are an IELTS Writing examiner.
+
+You MUST respond ONLY with valid JSON.
 Do NOT include any text before or after the JSON.
 Do NOT use markdown code blocks.
-Do NOT write explanations in Vietnamese or English outside the JSON.
+Do NOT output explanations outside the JSON.
+Do NOT add Vietnamese outside the JSON.
 
-Required JSON format:
+✔ You MUST respond in BILINGUAL FORMAT:
+Each field must contain **English first**, then Vietnamese translation.
+
+STRICT JSON format:
 {
-  "task": "feedback text here",
-  "coherence": "feedback text here",
-  "lexical": "feedback text here",
-  "grammar": "feedback text here",
+  "task": "[EN] ...\\n[VI] ...",
+  "coherence": "[EN] ...\\n[VI] ...",
+  "lexical": "[EN] ...\\n[VI] ...",
+  "grammar": "[EN] ...\\n[VI] ...",
   "overall": 7.0,
-  "suggestion": "feedback text here"
-}`,
+  "suggestion": "[EN] ...\\n[VI] ..."
+}
+
+Rules:
+- English explanation: 2–3 sentences, academic IELTS tone.
+- Vietnamese explanation: natural, dễ hiểu, ngắn gọn.
+- No markdown, no extra text.
+- Use \\n for new lines.
+`,
       },
       {
         role: "user",
-        content: `Evaluate this IELTS Writing Task 2 essay and return ONLY JSON:
+        content: `Evaluate this IELTS Writing Task 2 essay and return ONLY the JSON object:
 
 Essay:
 ${essay}
@@ -73,38 +86,66 @@ ${essay}
 Remember: Return ONLY the JSON object, nothing else.`,
       },
     ],
-    temperature: 0.3, // Lower temperature for more consistent output
+    temperature: 0.4, // ổn định hơn
   });
 
   const content = res.choices[0].message.content ?? "{}";
 
   try {
-    // Try to parse directly
     return JSON.parse(content);
   } catch (parseError) {
-    console.error("❌ Failed to parse GPT Writing response:", content.substring(0, 200));
+    console.error("❌ Failed to parse GPT Writing response:", content);
 
-    // Try to extract JSON from markdown if present
-    const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+    const jsonMatch = content.match(/({[\s\S]*})/);
     if (jsonMatch) {
       try {
         return JSON.parse(jsonMatch[1]);
-      } catch (e) {
-        console.error("❌ Failed to parse extracted JSON");
-      }
+      } catch (_) {}
     }
 
-    // Return fallback
     return {
-      task: "Error: Unable to evaluate",
-      coherence: "Error: Unable to evaluate",
-      lexical: "Error: Unable to evaluate",
-      grammar: "Error: Unable to evaluate",
+      task: "Error",
+      coherence: "Error",
+      lexical: "Error",
+      grammar: "Error",
       overall: 0,
-      suggestion: `GPT returned invalid format. Raw: ${content.substring(0, 150)}...`,
+      suggestion: "Error",
       error: "Invalid JSON response",
     };
   }
+}
+
+
+export async function analyzeNumerology(name: string, dob: string) {
+  const prompt = `
+Bạn là chuyên gia thần số học.
+
+Hãy phân tích thần số học dựa trên:
+- Họ tên: ${name}
+- Ngày sinh: ${dob}
+
+❗ TRẢ VỀ DUY NHẤT HTML, KHÔNG ĐƯỢC TRẢ JSON ❗
+HTML phải có format:
+
+<div>
+  <h3>🔮 Phân tích thần số học</h3>
+
+  <p><b>1. Chỉ số đường đời:</b> ...</p>
+  <p><b>2. Tính cách nổi bật:</b> ...</p>
+  <p><b>3. Điểm mạnh:</b> ...</p>
+  <p><b>4. Khuyến nghị học tập:</b> ...</p>
+</div>
+
+Không thêm text ngoài HTML.
+`;
+
+  const res = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.5,
+  });
+
+  return res.choices[0].message.content || "";
 }
 
 // ============================================
@@ -126,20 +167,31 @@ export async function evaluateSpeaking(transcript: string) {
     messages: [
       {
         role: "system",
-        content: `You are an IELTS Speaking examiner. You MUST respond ONLY with valid JSON.
+        content: `
+You are an IELTS Speaking Examiner. 
+You MUST respond ONLY with valid JSON.
 Do NOT include any text before or after the JSON.
 Do NOT use markdown code blocks.
-Do NOT write explanations in Vietnamese or English outside the JSON.
+Do NOT add Vietnamese outside the JSON.
 
-Required JSON format:
+✔ MUST RETURN BILINGUAL FORMAT (English first, Vietnamese below):
+
 {
-  "fluency": "feedback text here",
-  "grammar": "feedback text here",
-  "vocabulary": "feedback text here",
-  "pronunciation": "feedback text here",
-  "coherence": "feedback text here",
+  "fluency": "[EN] ...\\n[VI] ...",
+  "grammar": "[EN] ...\\n[VI] ...",
+  "vocabulary": "[EN] ...\\n[VI] ...",
+  "pronunciation": "[EN] ...\\n[VI] ...",
+  "coherence": "[EN] ...\\n[VI] ...",
   "overall": 6.5
-}`,
+}
+
+Rules:
+- English feedback: 2–3 sentences, examiner tone, academic, concise.
+- Vietnamese feedback: natural, dễ hiểu, không quá dài.
+- Use \\n for line breaks.
+- No markdown formatting.
+- No extra text outside JSON.
+`,
       },
       {
         role: "user",
@@ -147,39 +199,35 @@ Required JSON format:
 
 Transcript:
 ${transcript}
-
-Remember: Return ONLY the JSON object, nothing else.`,
+`,
       },
     ],
-    temperature: 0.3,
+    temperature: 0.4,
   });
 
   const content = res.choices[0].message.content ?? "{}";
 
   try {
     return JSON.parse(content);
-  } catch (parseError) {
-    console.error("❌ Failed to parse GPT Speaking response:", content.substring(0, 200));
+  } catch (err) {
+    console.error("❌ Failed to parse GPT Speaking response:", content);
 
-    // Try to extract JSON from markdown
-    const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+    const jsonMatch = content.match(/({[\s\S]*})/);
     if (jsonMatch) {
       try {
         return JSON.parse(jsonMatch[1]);
-      } catch (e) {
-        console.error("❌ Failed to parse extracted JSON");
-      }
+      } catch (_) {}
     }
 
-    // Return fallback
     return {
-      fluency: "Error: Unable to evaluate",
-      grammar: "Error: Unable to evaluate",
-      vocabulary: "Error: Unable to evaluate",
-      pronunciation: "Error: Unable to evaluate",
-      coherence: "Error: Unable to evaluate",
+      fluency: "Error",
+      grammar: "Error",
+      vocabulary: "Error",
+      pronunciation: "Error",
+      coherence: "Error",
       overall: 0,
       error: "Invalid JSON response",
     };
   }
 }
+

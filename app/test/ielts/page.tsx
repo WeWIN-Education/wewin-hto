@@ -95,10 +95,10 @@ export default function IELTSPage() {
         },
       });
 
-      if (checkData.exists) {
-        notify("⚠️ Bạn đã làm bài thi rồi! Không thể thi lại.", "error");
-        return;
-      }
+      // if (checkData.exists) {
+      //   notify("⚠️ Bạn đã làm bài thi rồi! Không thể thi lại.", "error");
+      //   return;
+      // }
 
       // 2️⃣ Lưu thời gian bắt đầu
       const date = formatTimestamp();

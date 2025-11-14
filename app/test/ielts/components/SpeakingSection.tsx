@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { apiCall } from "@/app/utils/apiClient";
 import { useNotification } from "@/app/utils/useNotification";
 import Notification from "@/app/components/notification";
+import ConfirmPopup from "@/app/components/confirmPopup";
 
 declare global {
   interface Window {
@@ -61,10 +62,13 @@ export default function SpeakingSection({
   const [audioSrc, setAudioSrc] = useState<Record<number, string>>({});
   const [uploading, setUploading] = useState<Record<number, boolean>>({});
   const [isFinished, setIsFinished] = useState(false);
+  const [finishing, setFinishing] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const recorderRef = useRef<any>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const loadedRef = useRef(false);
 
   const DRIVE_FOLDER_ID = "1UkpgUNL9JAIQgT8Ph_fiKJZWDOztI0ai";
   const SHEET_ID = "1Jh_KKBMmUzE7cltx6ZdGeeJIvm2q6PbDlgn_INKNQAY";
@@ -79,6 +83,9 @@ export default function SpeakingSection({
 
   // Load câu hỏi (giữ qua reload trong session)
   useEffect(() => {
+    if (loadedRef.current) return; // ⛔ Ngăn gọi lần 2
+    loadedRef.current = true;
+
     const loadQuestions = async () => {
       try {
         const savedQuestions = localStorage.getItem("ielts_questions");
@@ -302,144 +309,152 @@ export default function SpeakingSection({
     ).padStart(2, "0")}`;
 
   const handleFinishTest = async () => {
-    if (!confirm("Bạn có chắc muốn kết thúc bài thi không?")) return;
-
     if (!accessToken) {
       alert("❌ Missing Google access token!");
       return;
     }
 
-    notify("📤 Đang nộp bài. Vui lòng chờ...", "info");
-
-    // ===============================
-    // 1. LẤY DỮ LIỆU LOCAL
-    // ===============================
-
-    const userInfo = JSON.parse(localStorage.getItem("ielts_userInfo") || "{}");
-    const startTime = localStorage.getItem("ielts_startTime") || "";
-    const uuid = localStorage.getItem("ielts_uuid") || undefined;
-
-    const grammarObj = JSON.parse(
-      localStorage.getItem("ielts_grammar") || "{}"
-    );
-    const grammar = Array.from(
-      { length: 14 },
-      (_, i) => grammarObj[i + 1] || ""
-    );
-
-    const readingObj = JSON.parse(
-      localStorage.getItem("ielts_reading") || "{}"
-    );
-    const reading = [
-      readingObj["15"] || "",
-      readingObj["16"] || "",
-      readingObj["17"] || "",
-      readingObj["18"] || "",
-      readingObj["19"] || "",
-    ];
-
-    const writingAnswer =
-      localStorage.getItem("ielts_writingAnswer") || "(no answer)";
-
-    const speakingBase64 = JSON.parse(
-      localStorage.getItem("ielts_audio_base64") || "{}"
-    );
-    const speakingAudios = Object.values(speakingBase64); // 🔥 FIXED
-
-    // ===============================
-    // 2. SUBMIT IELTS MAIN API
-    // ===============================
-
-    const submitRes = await fetch("/api/submit-ielts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        accessToken,
-        sheetId: SHEET_ID,
-        uuid,
-        data: {
-          ...userInfo,
-          startTime,
-          grammar,
-          reading,
-          writingAnswer,
-        },
-      }),
-    });
-
-    // ===============================
-    // 3. SUBMIT SPEAKING PDF REPORT
-    // ===============================
+    if (finishing) return;
+    setFinishing(true);
 
     try {
-      const speakingLinks = JSON.parse(
-        localStorage.getItem("ielts_audio_links") || "[]"
+      notify("📤 Đang nộp bài. Vui lòng chờ...", "info");
+
+      // ===============================
+      // 1. LẤY DỮ LIỆU LOCAL
+      // ===============================
+
+      const userInfo = JSON.parse(
+        localStorage.getItem("ielts_userInfo") || "{}"
+      );
+      const startTime = localStorage.getItem("ielts_startTime") || "";
+      const uuid = localStorage.getItem("ielts_uuid") || undefined;
+
+      const grammarObj = JSON.parse(
+        localStorage.getItem("ielts_grammar") || "{}"
+      );
+      const grammar = Array.from(
+        { length: 14 },
+        (_, i) => grammarObj[i + 1] || ""
       );
 
-      // ❗ CHỜ upload xong
-      if (Object.values(uploading).some((v) => v === true)) {
-        notify("⏳ Đang upload audio... vui lòng chờ 2–3 giây!", "error");
-        return;
-      }
+      const readingObj = JSON.parse(
+        localStorage.getItem("ielts_reading") || "{}"
+      );
+      const reading = [
+        readingObj["15"] || "",
+        readingObj["16"] || "",
+        readingObj["17"] || "",
+        readingObj["18"] || "",
+        readingObj["19"] || "",
+      ];
 
-      const res = await fetch("/api/speaking-report", {
+      const writingAnswer =
+        localStorage.getItem("ielts_writingAnswer") || "(no answer)";
+
+      const speakingBase64 = JSON.parse(
+        localStorage.getItem("ielts_audio_base64") || "{}"
+      );
+      // ===============================
+      // 2. SUBMIT IELTS MAIN API
+      // ===============================
+
+      const submitRes = await fetch("/api/submit-ielts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           accessToken,
           sheetId: SHEET_ID,
           uuid,
-          student: {
-            name: userInfo.fullName,
-            email: userInfo.email,
+          data: {
+            ...userInfo,
+            startTime,
+            grammar,
+            reading,
+            writingAnswer,
           },
-          questions: {
-            part1: questions!.part1.join("\n"),
-            part2:
-              questions!.part2.topic +
-              "\n" +
-              questions!.part2.bullets.map((b) => "- " + b).join("\n") +
-              `\nFollow-up: ${questions!.part2.followUp}`,
-            part3:
-              questions!.part3.reading +
-              "\n" +
-              questions!.part3.questions.map((q) => "- " + q).join("\n"),
-          },
-          audios: speakingLinks,
         }),
       });
 
-      const speakingJson = await res.json();
+      // ===============================
+      // 3. SUBMIT SPEAKING PDF REPORT
+      // ===============================
 
-      if (!speakingJson.success) {
-        console.error("❌ Speaking report failed:", speakingJson);
-      } else {
-        console.log("📄 SPEAKING PDF CREATED:", speakingJson.pdfLink);
+      try {
+        const speakingLinks = JSON.parse(
+          localStorage.getItem("ielts_audio_links") || "[]"
+        );
+
+        // ❗ CHỜ upload xong
+        if (Object.values(uploading).some((v) => v === true)) {
+          notify("⏳ Đang upload audio... vui lòng chờ 2–3 giây!", "error");
+          return;
+        }
+
+        const res = await fetch("/api/speaking-report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accessToken,
+            sheetId: SHEET_ID,
+            uuid,
+            student: {
+              name: userInfo.fullName,
+              email: userInfo.email,
+            },
+            questions: {
+              part1: questions!.part1.join("\n"),
+              part2:
+                questions!.part2.topic +
+                "\n" +
+                questions!.part2.bullets.map((b) => "- " + b).join("\n") +
+                `\nFollow-up: ${questions!.part2.followUp}`,
+              part3:
+                questions!.part3.reading +
+                "\n" +
+                questions!.part3.questions.map((q) => "- " + q).join("\n"),
+            },
+            audios: speakingLinks,
+          }),
+        });
+
+        const speakingJson = await res.json();
+
+        if (!speakingJson.success) {
+          console.error("❌ Speaking report failed:", speakingJson);
+        } else {
+          console.log("📄 SPEAKING PDF CREATED:", speakingJson.pdfLink);
+        }
+      } catch (err) {
+        console.error("🔥 Speaking-report error:", err);
       }
-    } catch (err) {
-      console.error("🔥 Speaking-report error:", err);
-    }
 
-    let submitJson;
-    try {
-      submitJson = await submitRes.json();
-    } catch (err) {
-      console.error("❌ JSON parse failed:", err);
-      const text = await submitRes.text();
-      console.error("Raw:", text);
-      alert("Server trả về dữ liệu lỗi. Xem console.");
-      return;
-    }
+      let submitJson;
+      try {
+        submitJson = await submitRes.json();
+      } catch (err) {
+        console.error("❌ JSON parse failed:", err);
+        const text = await submitRes.text();
+        console.error("Raw:", text);
+        alert("Server trả về dữ liệu lỗi. Xem console.");
+        return;
+      }
 
-    if (!submitJson.success) {
-      alert("❌ Lỗi khi submit bài thi!");
-      console.error(submitJson);
-      return;
-    }
+      if (!submitJson.success) {
+        alert("❌ Lỗi khi submit bài thi!");
+        console.error(submitJson);
+        return;
+      }
 
-    notify("🎉 Hoàn tất bài thi!", "success");
-    localStorage.setItem("ielts_finished", "true");
-    onFinish?.();
+      notify("🎉 Hoàn tất bài thi!", "success");
+      localStorage.setItem("ielts_finished", "true");
+      onFinish?.();
+    } catch (error) {
+      notify("❌ Lỗi khi nộp bài", "error");
+      console.error(error);
+    } finally {
+      setFinishing(false);
+    }
   };
 
   /* ------------------------------ UI nhỏ ------------------------------ */
@@ -612,7 +627,7 @@ export default function SpeakingSection({
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={handleFinishTest}
+          onClick={() => setShowConfirm(true)}
           className="px-10 py-4 bg-linear-to-r from-green-500 to-emerald-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
         >
           🎯 KẾT THÚC BÀI THI
@@ -627,6 +642,31 @@ export default function SpeakingSection({
         visible={visible}
         onClose={close}
       />
+      <ConfirmPopup
+        visible={showConfirm}
+        title="Kết thúc bài thi?"
+        description="Sau khi kết thúc, bạn sẽ không thể ghi âm hoặc thay đổi câu trả lời nữa."
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={() => {
+          setShowConfirm(false);
+          handleFinishTest();
+        }}
+      />
+      {finishing && (
+        <div
+          className="
+      fixed inset-0 z-[99999]
+      bg-black/60 backdrop-blur-sm
+      flex flex-col items-center justify-center
+      text-white
+    "
+        >
+          <div className="animate-spin w-14 h-14 border-4 border-white border-t-transparent rounded-full"></div>
+          <p className="mt-6 text-lg font-semibold">
+            Đang nộp bài... vui lòng không thao tác
+          </p>
+        </div>
+      )}
     </div>
   );
 }
