@@ -102,14 +102,20 @@ Transcript:
 ${transcript}
 
 Yêu cầu phản hồi:
-1. Phân tích song ngữ Việt – Anh.
-2. Cấu trúc nội dung gồm 2 phần chính:
-   A. Bản tiếng Việt: trình bày chi tiết theo phong cách giám khảo IDP, bao gồm (1) Ấn tượng chung, (2) Phân tích từng tiêu chí Band Descriptors, (3) Gợi ý cải thiện cụ thể.
-   B. Bản tiếng Anh: diễn đạt lại đầy đủ nội dung của bản tiếng Việt với độ chính xác cao.
-3. Không dùng Markdown, không dùng dấu *, không dùng __, không emoji, không icon.
-4. Không xuống dòng quá nhiều, trình bày mạch lạc bằng đoạn văn thông thường.
-5. Được phép dùng đánh số 1., 2., 3. và mục A., B., C. khi cần.
-6. Giữ giọng văn nghiêm túc, mang tính đánh giá chuyên môn của giám khảo chính thức.
+1. Phân tích ngắn gọn, chỉ gồm 2 dòng:
+   - Dòng 1: Nhận xét tổng quan bằng tiếng Anh (1-2 câu)
+   - Dòng 2: Nhận xét tổng quan bằng tiếng Việt (1-2 câu)
+
+2. Không dùng Markdown, không dùng dấu *, không dùng __, không emoji, không icon.
+
+3. Giữ giọng văn ngắn gọn nhưng vẫn mang tính đánh giá chuyên môn của giám khảo.
+
+4. Xuống dòng 1 lần giữa phần tiếng Anh và tiếng Việt.
+
+Ví dụ format:
+The candidate demonstrates good fluency with occasional hesitations. Vocabulary range is adequate but could be more varied for higher band scores.
+
+Thí sinh thể hiện khả năng nói truyền đạt tốt với một vài ngắt quãng nhẹ. Vốn từ vựng đầy đủ nhưng cần đa dạng hơn để đạt band điểm cao hơn.
 
 Bắt đầu phản hồi:
 `;

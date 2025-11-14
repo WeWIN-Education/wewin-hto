@@ -355,7 +355,7 @@ export default function IELTSPage() {
                       value={userInfo.ieltsOther}
                       onChange={handleChange}
                       placeholder="Vui lòng ghi rõ..."
-                      className="w-full px-4 py-3 border border-[#B8D7F9] rounded-xl"
+                      className="w-full px-4 py-3 border border-[#B8D7F9] rounded-xl bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0E4BA9] transition-all"
                       required
                     />
                   </motion.div>

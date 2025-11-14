@@ -190,16 +190,22 @@ function UserSection({ session, setMenuOpen }: any) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => signIn("google")}
-        className="flex items-center gap-2 px-5 py-2.5 rounded-xl 
-                   font-semibold bg-white text-[#0E4BA9] shadow-lg hover:shadow-xl 
-                   transition-all duration-300"
+        className="
+        hidden lg:flex         
+        items-center gap-2 
+        px-5 py-2.5 rounded-xl 
+        font-semibold 
+        bg-white text-[#0E4BA9] 
+        shadow-lg hover:shadow-xl 
+        transition-all duration-300
+      "
       >
         🔐 Đăng nhập
       </motion.button>
     );
 
   return (
-    <div className="hidden md:flex items-center gap-3">
+    <div className="hidden lg:flex items-center gap-3">
       <div
         className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 
                    backdrop-blur-md text-white border border-white/30 shadow-md"
@@ -268,7 +274,7 @@ function MobileMenu({ menuOpen, setMenuOpen, session, isAdmin }: any) {
         animate={{ opacity: 1, height: "auto" }}
         exit={{ opacity: 0, height: 0 }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden bg-linear-to-b 
+        className="lg:hidden overflow-hidden bg-linear-to-b 
                    from-[#007BCE] to-[#00A6FB] border-t border-white/20"
       >
         <div className="px-6 py-6 space-y-4">

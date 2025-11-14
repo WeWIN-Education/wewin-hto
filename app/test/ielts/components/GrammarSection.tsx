@@ -76,10 +76,10 @@ export default function GrammarSection({ onNext }: GrammarSectionProps) {
   };
 
   const handleNext = () => {
-    if (!answers[question.id]) {
-      showNotification("Vui lòng chọn đáp án trước khi tiếp tục!", "error");
-      return;
-    }
+    // if (!answers[question.id]) {
+    //   showNotification("Vui lòng chọn đáp án trước khi tiếp tục!", "error");
+    //   return;
+    // }
 
     if (current < grammarQuestions.length - 1) {
       setCurrent(current + 1);
