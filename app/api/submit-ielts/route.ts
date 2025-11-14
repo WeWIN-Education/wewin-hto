@@ -15,7 +15,7 @@ import {
 import { formatTimestamp } from "@/app/utils/format";
 import { sendEmailWithPDF } from "@/app/components/sendMail";
 import { buildIELTSEmailHTML } from "@/app/components/emailIELTS";
-import { analyzeNumerologyHTML } from "../numberlogy/route";
+import { analyzeNumerologyHTML } from "../numberlogy/helpers";
 
 export const runtime = "nodejs";
 
