@@ -412,14 +412,6 @@ export function buildIELTSEmailHTML(params: EmailTemplateParams): string {
                   ${numerologyHTML}
                 </div>
               </div>
-
-              <!-- FOOTER -->
-              <p style="text-align:center;color:#888;font-size:13px;margin-top:40px;">
-                Trân trọng,<br/>
-                <span style="color:#0E4BA9;font-weight:700;">WeWIN HTO</span><br/>
-                <span style="font-size:12px;">Email tự động – vui lòng không trả lời</span>
-              </p>
-
             </td>
           </tr>
 
