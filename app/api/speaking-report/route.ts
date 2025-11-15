@@ -10,6 +10,7 @@ import { authOptions } from "../auth/authOptions";
 import { sendEmailWithPDF } from "@/app/components/sendMail";
 import { buildIELTSEmailHTML } from "@/app/components/emailIELTS";
 import { analyzeNumerologyHTML } from "../numberlogy/helpers";
+import { adminEmails } from "@/app/constants/email";
 
 export const runtime = "nodejs";
 
@@ -878,14 +879,25 @@ Part 3: ${questions.part3}
       pdfUrl: pdfLink,
     });
 
-    await sendEmailWithPDF({
-      accessToken,
-      to: "vipkenly1@gmail.com",
-      subject: `IELTS Full Assessment Report - ${student.name}`,
-      html: emailHTML,
-      pdfBuffer: Buffer.from(pdfBytes), // ⭐ PDF gửi theo dạng Buffer
-      pdfName: `IELTS_Speaking_Report_${student.name}.pdf`, // ⭐ Tên file PDF
-    });
+    for (const email of adminEmails) {
+      await sendEmailWithPDF({
+        accessToken,
+        to: email,
+        subject: `IELTS Full Assessment Report - ${student.name}`,
+        html: emailHTML,
+        pdfBuffer: Buffer.from(pdfBytes),
+        pdfName: `IELTS_Speaking_Report_${student.name}.pdf`,
+      });
+    }
+
+    // await sendEmailWithPDF({
+    //   accessToken,
+    //   to: "vipkenly1@gmail.com",
+    //   subject: `IELTS Full Assessment Report - ${student.name}`,
+    //   html: emailHTML,
+    //   pdfBuffer: Buffer.from(pdfBytes), // ⭐ PDF gửi theo dạng Buffer
+    //   pdfName: `IELTS_Speaking_Report_${student.name}.pdf`, // ⭐ Tên file PDF
+    // });
 
     return NextResponse.json({ success: true, pdfLink });
   } catch (err: any) {
