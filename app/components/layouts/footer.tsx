@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,224,138,0.08),transparent_50%)]"></div>
 
-      <div className="relative max-w-7xl mx-auto px-6 py-8 lg:py-14">
+      <div className="relative max-w-7xl mx-auto px-2 py-8 lg:py-8">
         {/* --- Bố cục 3 phần (Desktop) / Compact (Mobile) --- */}
         <div className="flex flex-col lg:flex-row justify-between items-start gap-6 lg:gap-10 mb-5 text-center lg:text-left">
           

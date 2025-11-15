@@ -7,6 +7,9 @@ import fs from "fs";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/authOptions";
+import { sendEmailWithPDF } from "@/app/components/sendMail";
+import { buildIELTSEmailHTML } from "@/app/components/emailIELTS";
+import { analyzeNumerologyHTML } from "../numberlogy/helpers";
 
 export const runtime = "nodejs";
 
@@ -19,9 +22,20 @@ interface SpeakingReportRequest {
   accessToken: string;
   sheetId: string;
   uuid: string;
-  student: { name: string; email: string }; // email sẽ bị override bởi session
+  student: { name: string; email: string; birthDate: string };
   questions: { part1: string; part2: string; part3: string };
   audios: { part: 1 | 2 | 3; link: string }[];
+  report: {
+    gradingResult: any;
+    wrongAnswers: any;
+    writingScore: any;
+    writingAnswer: string;
+    grammarReadingBand: number;
+    writingBand: number;
+    overallBand: number;
+    numerologyHTML: string;
+    timestamp: string;
+  };
 }
 
 type PartKey = "part1" | "part2" | "part3";
@@ -137,10 +151,7 @@ Bắt đầu phản hồi:
   const raw = (await res.json()).choices[0].message.content || "";
 
   // Làm sạch Markdown nếu GPT lỡ dùng
-  return raw
-    .replace(/\*\*/g, "")
-    .replace(/__+/g, "")
-    .replace(/[`~]/g, "");
+  return raw.replace(/\*\*/g, "").replace(/__+/g, "").replace(/[`~]/g, "");
 }
 
 /* ----------------------------------------------------- */
@@ -779,6 +790,7 @@ export async function POST(req: Request) {
     const { accessToken, sheetId, uuid, student, questions, audios } = body;
 
     const finalEmail = userEmail; // override email học viên bằng email đăng nhập
+    const { report } = body;
 
     /* TRANSCRIBE */
     const transcripts: Record<string, string> = {};
@@ -786,7 +798,8 @@ export async function POST(req: Request) {
       const id = extractFileId(link);
       if (!id) continue;
       const audio = await downloadAudioFromDrive(accessToken, id);
-      transcripts[`part${part}` as PartKey] = (await transcribeWithWhisper(audio)) || "";
+      transcripts[`part${part}` as PartKey] =
+        (await transcribeWithWhisper(audio)) || "";
     }
 
     const fullTranscript = Object.values(transcripts).join("\n\n");
@@ -844,6 +857,34 @@ Part 3: ${questions.part3}
       name: student.name,
       email: finalEmail,
       pdfLink,
+    });
+
+    const numerologyHTML = await analyzeNumerologyHTML(
+      student.name,
+      student.birthDate
+    );
+
+    const emailHTML = buildIELTSEmailHTML({
+      fullName: student.name,
+      email: student.email,
+      timestamp: report.timestamp,
+      gradingResult: report.gradingResult, // 🟦 wrongAnswers nẳm trong này
+      writingScore: report.writingScore,
+      writingAnswer: report.writingAnswer,
+      grammarReadingBand: report.grammarReadingBand,
+      writingBand: report.writingBand,
+      overallBand: report.overallBand,
+      numerologyHTML,
+      pdfUrl: pdfLink,
+    });
+
+    await sendEmailWithPDF({
+      accessToken,
+      to: "vipkenly1@gmail.com",
+      subject: `IELTS Full Assessment Report - ${student.name}`,
+      html: emailHTML,
+      pdfBuffer: Buffer.from(pdfBytes), // ⭐ PDF gửi theo dạng Buffer
+      pdfName: `IELTS_Speaking_Report_${student.name}.pdf`, // ⭐ Tên file PDF
     });
 
     return NextResponse.json({ success: true, pdfLink });

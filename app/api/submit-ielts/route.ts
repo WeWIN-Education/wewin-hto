@@ -16,6 +16,7 @@ import { formatTimestamp } from "@/app/utils/format";
 import { sendEmailWithPDF } from "@/app/components/sendMail";
 import { buildIELTSEmailHTML } from "@/app/components/emailIELTS";
 import { analyzeNumerologyHTML } from "../numberlogy/helpers";
+import { allowedEmails } from "@/app/constants/email";
 
 export const runtime = "nodejs";
 
@@ -327,28 +328,36 @@ export async function POST(req: Request) {
     // 6. GPT – THẦN SỐ HỌC (NEW)
     // --------------------------------------------
     const numerologyHTML = await analyzeNumerologyHTML(fullName, birthDate);
-
     try {
-      const emailHTML = buildIELTSEmailHTML({
-        fullName,
-        email,
-        timestamp: finishTime,
-        gradingResult,
-        writingScore,
-        writingAnswer,
-        grammarReadingBand,
-        writingBand,
-        overallBand,
-        numerologyHTML, // ⭐ BẮT BUỘC
-        pdfUrl: null,
-      });
+      // const emailHTML = buildIELTSEmailHTML({
+      //   fullName,
+      //   email,
+      //   timestamp: finishTime,
+      //   gradingResult,
+      //   writingScore,
+      //   writingAnswer,
+      //   grammarReadingBand,
+      //   writingBand,
+      //   overallBand,
+      //   numerologyHTML, // ⭐ BẮT BUỘC
+      //   pdfUrl: null,
+      // });
 
-      await sendEmailWithPDF({
-        accessToken,
-        to: "vipkenly1@gmail.com",
-        subject: `IELTS Assessment Report - ${fullName}`,
-        html: emailHTML,
-      });
+      // for (const recipient of allowedEmails) {
+      //   await sendEmailWithPDF({
+      //     accessToken,
+      //     to: recipient, // ✔ truyền từng email
+      //     subject: `IELTS Assessment Report - ${fullName}`,
+      //     html: emailHTML,
+      //   });
+      // }
+
+      // await sendEmailWithPDF({
+      //   accessToken,
+      //   to: "vipkenly1@gmail.com", // ✔ truyền từng email
+      //   subject: `IELTS Assessment Report - ${fullName}`,
+      //   html: emailHTML,
+      // });
 
       console.log("✅ Email sent successfully to:", email);
       emailSent = true;
@@ -388,25 +397,15 @@ export async function POST(req: Request) {
     // ---------------------------------------------------
     return NextResponse.json({
       success: true,
-      id,
-      scores: {
-        grammarReading: {
-          band: grammarReadingBand,
-          score: gradingResult.totalScore,
-          maxScore: gradingResult.maxScore,
-          correctCount: gradingResult.correctCount,
-          totalQuestions: gradingResult.totalQuestions,
-        },
-        writing: {
-          band: writingBand,
-          details: writingScore,
-        },
-        overall: overallBand,
-      },
-      skillStats: gradingResult.skillStats,
-      wrongAnswers: gradingResult.wrongAnswers,
-      emailSent,
-      emailError,
+      uuid,
+      gradingResult,
+      writingScore,
+      writingAnswer,
+      grammarReadingBand,
+      writingBand,
+      overallBand,
+      numerologyHTML,
+      timestamp: finishTime, // ⭐ FIX
     });
   } catch (error: any) {
     console.error("🔥 API ERROR:", error);

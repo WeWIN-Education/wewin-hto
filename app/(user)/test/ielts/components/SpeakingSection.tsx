@@ -7,6 +7,7 @@ import { apiCall } from "@/app/utils/apiClient";
 import { useNotification } from "@/app/utils/useNotification";
 import Notification from "@/app/components/notification";
 import ConfirmPopup from "@/app/components/confirmPopup";
+import { formatTimestamp } from "@/app/utils/format";
 
 declare global {
   interface Window {
@@ -376,6 +377,23 @@ export default function SpeakingSection({
         }),
       });
 
+      let submitJson;
+      try {
+        submitJson = await submitRes.json();
+      } catch (err) {
+        console.error("❌ JSON parse failed:", err);
+        const text = await submitRes.text();
+        console.error("Raw:", text);
+        alert("Server trả về dữ liệu lỗi. Xem console.");
+        return;
+      }
+
+      if (!submitJson.success) {
+        alert("❌ Lỗi khi submit bài thi!");
+        console.error(submitJson);
+        return;
+      }
+
       // ===============================
       // 3. SUBMIT SPEAKING PDF REPORT
       // ===============================
@@ -401,6 +419,7 @@ export default function SpeakingSection({
             student: {
               name: userInfo.fullName,
               email: userInfo.email,
+              birthDate: userInfo.birthDate,
             },
             questions: {
               part1: questions!.part1.join("\n"),
@@ -415,6 +434,7 @@ export default function SpeakingSection({
                 questions!.part3.questions.map((q) => "- " + q).join("\n"),
             },
             audios: speakingLinks,
+            report: submitJson,
           }),
         });
 
@@ -427,23 +447,6 @@ export default function SpeakingSection({
         }
       } catch (err) {
         console.error("🔥 Speaking-report error:", err);
-      }
-
-      let submitJson;
-      try {
-        submitJson = await submitRes.json();
-      } catch (err) {
-        console.error("❌ JSON parse failed:", err);
-        const text = await submitRes.text();
-        console.error("Raw:", text);
-        alert("Server trả về dữ liệu lỗi. Xem console.");
-        return;
-      }
-
-      if (!submitJson.success) {
-        alert("❌ Lỗi khi submit bài thi!");
-        console.error(submitJson);
-        return;
       }
 
       notify("🎉 Hoàn tất bài thi!", "success");
@@ -655,7 +658,7 @@ export default function SpeakingSection({
       {finishing && (
         <div
           className="
-      fixed inset-0 z-[99999]
+      fixed inset-0 z-99999
       bg-black/60 backdrop-blur-sm
       flex flex-col items-center justify-center
       text-white

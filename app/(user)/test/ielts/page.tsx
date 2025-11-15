@@ -35,7 +35,7 @@ type Stage = "form" | "grammar" | "reading" | "writing" | "speaking" | "done";
 
 export default function IELTSPage() {
   const { notify, visible, message, type, close } = useNotification();
-  const { data: session } = useSession();
+  const { data: clientSession  } = useSession();
 
   const [stage, setStage] = useState<Stage>("form");
 
@@ -81,7 +81,7 @@ export default function IELTSPage() {
       return;
     }
 
-    const accessToken = session?.accessToken as string;
+    const accessToken = clientSession ?.accessToken as string;
     const sheetId = "1Jh_KKBMmUzE7cltx6ZdGeeJIvm2q6PbDlgn_INKNQAY";
 
     try {
