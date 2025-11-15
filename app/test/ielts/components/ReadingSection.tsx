@@ -58,7 +58,29 @@ export default function ReadingSection({ onNext }: ReadingSectionProps) {
           <p>
             The invention of rockets is linked inextricably with the invention
             of 'black powder'. Most historians of technology credit the Chinese
-            with its discovery. ...
+            with its discovery. They base their belief on studies of Chinese
+            writings or on the notebooks of early Europeans who visited China.
+            It is probable that sometime in the tenth century, black powder was
+            first compounded from its basic ingredients of saltpetre, charcoal,
+            and sulphur. This does not mean that it was immediately used to
+            propel rockets. By the thirteenth century, powder-propelled fire
+            arrows had become rather common. The Chinese relied on this
+            technological development to produce incendiary projectiles of many
+            sorts, explosive grenades, and possibly cannons to repel their
+            enemies. One such weapon was the 'basket of fire' or, directly
+            translated, the 'arrows like flying leopards'. The 0.7-metre-long
+            arrows, each with a long tube of gunpowder attached near the point,
+            could be fired from a large octagonal-shaped basket. Another weapon
+            was the 'arrow as a flying sabre', fired from crossbows. The rocket,
+            placed in a similar position to other rocket-propelled arrows, was
+            designed to increase the range. It was not until the eighteenth
+            century that Europe became seriously interested in using rockets as
+            weapons of war and not just in pyrotechnics. The Indian rockets used
+            against the British were described as 'an iron envelope about 200
+            millimetres long and 40 millimetres in diameter with sharp points at
+            the top and a 3m-long bamboo guiding stick'. The British later
+            developed their own version, while the Americans in the nineteenth
+            century used rockets in battle against Mexico.
           </p>
 
           <p className="mt-4 italic text-gray-600">
