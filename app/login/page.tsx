@@ -54,7 +54,7 @@ export default function LoginPage() {
           Welcome to <span className="text-[#00A6FB]">WeWIN HTO</span>
         </h1>
         <p className="text-gray-600 mb-10 text-base leading-relaxed">
-          Vui lòng đăng nhập bằng tài khoản Googlei
+          Vui lòng đăng nhập bằng tài khoản Google để tiếp tục sử dụng dịch vụ.
         </p>
 
         <motion.button
