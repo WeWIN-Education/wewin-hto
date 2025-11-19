@@ -47,7 +47,7 @@ export default function Navbar() {
           >
             <div
               className="max-w-8xl mx-auto flex items-center justify-between 
-                            px-4 sm:px-6 md:px-8 lg:px-10 py-3 gap-3"
+                            px-4 sm:px-6 md:px-8 lg:px-10 gap-3"
             >
               {/* 🔹 Logo */}
               <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -116,54 +116,43 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* spacer tránh bị che */}
-      <div className="h-[7.5vh]" />
+      <div className="h-[10.5vh]" />
     </>
   );
 }
 
 /* 🔹 Components phụ tách gọn */
-
 function Logo() {
   return (
-    <>
-      <div className="relative group">
-        <div
-          className="absolute inset-0 bg-linear-to-r from-blue-300 to-cyan-300 
-                        rounded-full blur-md opacity-0 group-hover:opacity-50 
-                        transition-opacity duration-300"
-        />
-        <Image
-          src="/HT Group Transparent.png"
-          alt="HT Group Logo"
-          width={50}
-          height={50}
-          className="relative rounded-full p-1.5 shadow-md bg-white transition-all duration-300"
-        />
-      </div>
+    <Link href={Routes.HOME} className="flex items-center gap-3">
+      <div className="relative group flex items-center">
 
-      <div className="relative group">
+        {/* 🔹 Hiệu ứng sáng chỉnh gọn, không còn phình */}
         <div
-          className="absolute inset-0 bg-linear-to-r from-amber-300 to-yellow-400 
-                        rounded-full blur-md opacity-0 group-hover:opacity-50 
-                        transition-opacity duration-300"
+          className="absolute inset-0 scale-95 
+          bg-blue-300/20 
+          blur-sm 
+          opacity-0 group-hover:opacity-40 
+          transition-all duration-300 rounded-xl"
         />
+
+        {/* 🔹 Logo chính (đã fix lỗi className) */}
         <Image
-          src="/logo.png"
+          src="/HTO-WeWIN.png"
           alt="WeWIN Logo"
-          width={110}
-          height={110}
-          className="relative rounded-full p-1.5 shadow-md bg-white transition-all duration-300"
+          width={135}   // <-- to hơn nhưng không phá layout
+          height={40}
+          className="relative shadow-lg transition-all duration-300 group-hover:scale-105"
         />
       </div>
 
-      <Link href={Routes.HOME} className="ml-2 hidden sm:block">
-        <span className="text-xl font-bold tracking-wide text-[#E4C28E] drop-shadow-lg">
-          WeWIN HTO
-        </span>
-      </Link>
-    </>
+      <span className="text-xl font-bold tracking-wide text-[#E4C28E] hidden sm:block drop-shadow-lg">
+        WeWIN HTO
+      </span>
+    </Link>
   );
 }
+
 
 function IconDoc() {
   return (

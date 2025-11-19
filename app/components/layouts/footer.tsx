@@ -17,42 +17,42 @@ export default function Footer() {
       <div className="relative max-w-7xl mx-auto px-2 py-8 lg:py-8">
         {/* --- Bố cục 3 phần (Desktop) / Compact (Mobile) --- */}
         <div className="flex flex-col lg:flex-row justify-between items-start gap-6 lg:gap-10 mb-5 text-center lg:text-left">
-          
           {/* 🔹 Logo + WeWIN Info (Compact trên mobile) */}
-          <div className="flex flex-col items-center lg:items-start justify-center gap-3 lg:gap-5 w-full lg:w-1/3">
+          <div className="flex flex-col items-center lg:items-start justify-center gap-3 lg:gap-5 items-center justify-center w-full lg:w-1/3">
+            {/* 🔥 Card chứa logo mới (1 logo duy nhất) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative flex items-center w-full max-w-[280px] lg:max-w-[400px] h-[100px] lg:h-[140px] rounded-2xl lg:rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.2),0_0_0_1px_rgba(255,255,255,0.1)] backdrop-blur-sm"
+              className="
+                relative flex items-center justify-center
+                w-full max-w-[180px] lg:max-w-[200px]
+                h-[80px] lg:h-[80px]            /* 🔥 tăng nhẹ chiều cao để cân đối */
+                rounded-3xl 
+                overflow-hidden backdrop-blur-sm
+                shadow-[0_6px_20px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.15)]
+                lg:ml-27
+              "
             >
-              <div className="absolute inset-0 flex">
-                <div className="w-1/2 bg-linear-to-br from-[#E3F2FD] via-[#BBDEFB] to-[#90CAF9]" />
-                <div className="w-1/2 bg-linear-to-br from-[#1E5FBF] via-[#0E4BA9] to-[#0A3A7F]" />
-              </div>
+              {/* Gradient nền */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0E4BA9] via-[#007BCE] to-[#00A6FB] opacity-90" />
 
-              <div className="absolute left-1/2 top-0 w-0.5 h-full bg-linear-to-b from-transparent via-[#FFE08A] to-transparent blur-sm" />
-
-              <div className="relative flex w-full h-full z-10">
-                <div className="w-1/2 flex items-center justify-center">
-                  <motion.img
-                    whileHover={{ scale: 1.1, rotate: 3 }}
-                    src="/HT Group Transparent.png"
-                    alt="HT Group"
-                    className="h-[60px] lg:h-[85px] w-[60px] lg:w-[85px] object-contain"
-                  />
-                </div>
-                <div className="w-1/2 flex items-center justify-center">
-                  <motion.img
-                    whileHover={{ scale: 1.1, rotate: -3 }}
-                    src="/logo.png"
-                    alt="WeWIN Logo"
-                    className="h-[70px] lg:h-[95px] w-[70px] lg:w-[95px] object-contain drop-shadow-[0_8px_16px_rgba(255,179,0,0.4)]"
-                  />
-                </div>
-              </div>
+              {/* LOGO CENTER VISUAL PERFECT */}
+              <motion.img
+                whileHover={{ scale: 1.05 }}
+                src="/HTO-WeWIN.png"
+                alt="WeWIN Logo"
+                className="
+                  relative z-10
+                  h-[120px] lg:h-[185px]     /* 🔥 logo nhỏ hơn → nằm chính giữa hoàn hảo */
+                  w-auto
+                  object-contain
+                  drop-shadow-[0_6px_14px_rgba(255,179,0,0.5)]
+                "
+              />
             </motion.div>
 
+            {/* Text */}
             <div className="text-center lg:text-center w-full">
               <h2 className="text-lg lg:text-xl font-bold text-[#E4C28E] mb-1 tracking-wide">
                 WeWIN Education
@@ -71,11 +71,20 @@ export default function Footer() {
             <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm opacity-90">
               <li>292B Nơ Trang Long, P.12, Bình Thạnh, TP.HCM</li>
               <li>
-                ☎️ <a href="tel:0345969388" className="hover:text-[#E4C28E] transition-colors">0345 969 388</a>
+                ☎️{" "}
+                <a
+                  href="tel:0345969388"
+                  className="hover:text-[#E4C28E] transition-colors"
+                >
+                  0345 969 388
+                </a>
               </li>
               <li>
                 ✉️{" "}
-                <a href="mailto:officemanager@wewin.edu.vn" className="hover:text-[#E4C28E] transition-colors break-all">
+                <a
+                  href="mailto:officemanager@wewin.edu.vn"
+                  className="hover:text-[#E4C28E] transition-colors break-all"
+                >
                   officemanager@wewin.edu.vn
                 </a>
               </li>
@@ -127,7 +136,8 @@ export default function Footer() {
         {/* --- Copyright --- */}
         <p className="text-center text-xs lg:text-sm opacity-80">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold text-[#E4C28E]">WeWIN HTO</span>. All rights reserved.
+          <span className="font-semibold text-[#E4C28E]">WeWIN HTO</span>. All
+          rights reserved.
         </p>
       </div>
     </motion.footer>
