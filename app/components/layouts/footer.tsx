@@ -17,106 +17,47 @@ export default function Footer() {
       <div className="relative max-w-7xl mx-auto px-2 py-8 lg:py-8">
         {/* --- Bố cục 3 phần (Desktop) / Compact (Mobile) --- */}
         <div className="flex flex-col lg:flex-row justify-between items-start gap-6 lg:gap-10 mb-5 text-center lg:text-left">
-          {/* 🔹 Logo + WeWIN Info (Compact trên mobile) */}
-          <div className="flex flex-col items-center lg:items-start justify-center gap-3 lg:gap-5 items-center justify-center w-full lg:w-1/3">
-            {/* 🔥 Card chứa logo mới (1 logo duy nhất) */}
+          {/* 🔹 Logo + WeWIN Info */}
+          <div className="flex flex-col items-center justify-center w-full text-center gap-3 lg:gap-5">
+            {/* 🔥 Card chứa logo mới */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="
-                relative flex items-center justify-center
-                w-full max-w-[180px] lg:max-w-[200px]
-                h-[80px] lg:h-[80px]            /* 🔥 tăng nhẹ chiều cao để cân đối */
-                rounded-3xl 
-                overflow-hidden backdrop-blur-sm
-                shadow-[0_6px_20px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.15)]
-                lg:ml-27
-              "
+        relative flex items-center justify-center
+        w-full max-w-[180px] lg:max-w-[200px]
+        h-[80px] lg:h-[80px]
+        rounded-3xl 
+        overflow-hidden backdrop-blur-sm
+        shadow-[0_6px_20px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.15)]
+      "
             >
               {/* Gradient nền */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#0E4BA9] via-[#007BCE] to-[#00A6FB] opacity-90" />
 
-              {/* LOGO CENTER VISUAL PERFECT */}
+              {/* LOGO */}
               <motion.img
                 whileHover={{ scale: 1.05 }}
                 src="/HTO-WeWIN.png"
                 alt="WeWIN Logo"
                 className="
-                  relative z-10
-                  h-[120px] lg:h-[185px]     /* 🔥 logo nhỏ hơn → nằm chính giữa hoàn hảo */
-                  w-auto
-                  object-contain
-                  drop-shadow-[0_6px_14px_rgba(255,179,0,0.5)]
-                "
+          relative z-10
+          h-[120px] lg:h-[185px]
+          w-auto object-contain
+          drop-shadow-[0_6px_14px_rgba(255,179,0,0.5)]
+        "
               />
             </motion.div>
 
             {/* Text */}
-            <div className="text-center lg:text-center w-full">
+            <div className="text-center w-full">
               <h2 className="text-lg lg:text-xl font-bold text-[#E4C28E] mb-1 tracking-wide">
                 WeWIN Education
               </h2>
               <p className="text-xs lg:text-sm opacity-90">
                 Nâng tầm tiếng Anh – Mở rộng tương lai 🌏
               </p>
-            </div>
-          </div>
-
-          {/* 🔹 Giữa: Liên hệ (Compact trên mobile) */}
-          <div className="flex-1 w-full bg-white/5 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-            <h3 className="text-sm lg:text-base font-semibold text-[#E4C28E] mb-2 lg:mb-3 uppercase tracking-wider flex justify-center lg:justify-start items-center gap-2">
-              📍 Liên hệ
-            </h3>
-            <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm opacity-90">
-              <li>292B Nơ Trang Long, P.12, Bình Thạnh, TP.HCM</li>
-              <li>
-                ☎️{" "}
-                <a
-                  href="tel:0345969388"
-                  className="hover:text-[#E4C28E] transition-colors"
-                >
-                  0345 969 388
-                </a>
-              </li>
-              <li>
-                ✉️{" "}
-                <a
-                  href="mailto:officemanager@wewin.edu.vn"
-                  className="hover:text-[#E4C28E] transition-colors break-all"
-                >
-                  officemanager@wewin.edu.vn
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* 🔹 Phải: Kết nối (Compact trên mobile) */}
-          <div className="flex-1 w-full bg-white/5 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-            <h3 className="text-sm lg:text-base font-semibold text-[#E4C28E] mb-2 lg:mb-3 uppercase tracking-wider flex justify-center lg:justify-start items-center gap-2">
-              🌐 Kết nối
-            </h3>
-            <div className="flex flex-wrap gap-2 lg:gap-4 justify-center lg:justify-start">
-              <SocialButton
-                href="https://wewin.edu.vn"
-                icon="https://img.icons8.com/fluency/48/domain.png"
-              />
-              <SocialButton
-                href="https://www.facebook.com/winwineducation"
-                icon="https://img.icons8.com/color/48/facebook-new.png"
-              />
-              <SocialButton
-                href="https://www.tiktok.com/@wewin.education.vn"
-                icon="https://img.icons8.com/color/48/tiktok--v1.png"
-              />
-              <SocialButton
-                href="https://www.youtube.com/@wewin.education"
-                icon="https://img.icons8.com/color/48/youtube-play.png"
-              />
-              <SocialButton
-                href="mailto:officemanager@wewin.edu.vn"
-                icon="https://img.icons8.com/color/48/gmail--v1.png"
-              />
             </div>
           </div>
         </div>
