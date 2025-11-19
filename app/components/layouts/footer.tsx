@@ -25,13 +25,13 @@ export default function Footer() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="
-        relative flex items-center justify-center
-        w-full max-w-[180px] lg:max-w-[200px]
-        h-[80px] lg:h-[80px]
-        rounded-3xl 
-        overflow-hidden backdrop-blur-sm
-        shadow-[0_6px_20px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.15)]
-      "
+                relative flex items-center justify-center
+                w-full max-w-[180px] lg:max-w-[200px]
+                h-[80px] lg:h-[80px]
+                rounded-3xl 
+                overflow-hidden backdrop-blur-sm
+                shadow-[0_6px_20px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.15)]
+              "
             >
               {/* Gradient nền */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#0E4BA9] via-[#007BCE] to-[#00A6FB] opacity-90" />
@@ -42,11 +42,11 @@ export default function Footer() {
                 src="/HTO-WeWIN.png"
                 alt="WeWIN Logo"
                 className="
-          relative z-10
-          h-[120px] lg:h-[185px]
-          w-auto object-contain
-          drop-shadow-[0_6px_14px_rgba(255,179,0,0.5)]
-        "
+                  relative z-10
+                  h-[120px] lg:h-[185px]
+                  w-auto object-contain
+                  drop-shadow-[0_6px_14px_rgba(255,179,0,0.5)]
+                "
               />
             </motion.div>
 

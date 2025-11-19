@@ -143,20 +143,6 @@ export default function NotFoundPage() {
           style={p}
         />
       ))}
-
-      {/* ✨ Signature WeWIN */}
-      <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-2 sm:gap-3 opacity-40 hover:opacity-80 transition-all duration-300">
-        <Image
-          src="/logo.png"
-          alt="WeWIN Logo"
-          width={32}
-          height={32}
-          className="rounded-full sm:w-8 sm:h-8"
-        />
-        <span className="text-xs sm:text-sm font-semibold text-[#0E4BA9] whitespace-nowrap">
-          Powered by <span className="text-[#E4C28E]">WeWIN Education</span>
-        </span>
-      </div>
     </div>
   );
 }

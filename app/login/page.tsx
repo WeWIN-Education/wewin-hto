@@ -20,7 +20,7 @@ export default function LoginPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(90vh-80px)]  bg-linear-to-b from-[#EAF4FF] to-[#F9FAFB] font-[Lexend]">
         <motion.img
-          src="/logo.png"
+          src="/HTO-WeWIN.png"
           alt="WeWIN Logo"
           className="w-28 mb-6 drop-shadow-lg"
           animate={{ rotate: 360 }}
@@ -43,7 +43,7 @@ export default function LoginPage() {
         className="bg-white px-16 py-14 rounded-[40px] shadow-2xl text-center w-[70vh] border-t-4 border-[#0E4BA9]"
       >
         <motion.img
-          src="/logo.png"
+          src="/HTO-WeWIN.png"
           alt="WeWIN Logo"
           className="mx-auto mb-8 w-40 drop-shadow-lg"
           initial={{ opacity: 0, scale: 0.85 }}

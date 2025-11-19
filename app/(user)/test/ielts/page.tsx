@@ -250,7 +250,7 @@ export default function IELTSPage() {
               className="flex justify-center mb-6"
             >
               <img
-                src="/logo.png"
+                src="/HTO-WeWIN.png"
                 alt="WeWIN Logo"
                 className="w-52 drop-shadow-md"
               />
