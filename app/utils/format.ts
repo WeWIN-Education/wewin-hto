@@ -51,3 +51,7 @@ export function toPureArrayBuffer(u8: Uint8Array): ArrayBuffer {
   view.set(u8);
   return buffer; // always pure ArrayBuffer (never SharedArrayBuffer)
 }
+
+export function encodeSubject(text: string) {
+  return `=?UTF-8?B?${Buffer.from(text, "utf8").toString("base64")}?=`;
+}

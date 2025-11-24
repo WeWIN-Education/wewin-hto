@@ -12,3 +12,7 @@ export const adminEmails = [
   "officemanager@wewin.edu.vn",
   "prin@wewin.edu.vn",
 ];
+
+// export const adminEmails = [
+//   "vipkenly1@gmail.com",
+// ];

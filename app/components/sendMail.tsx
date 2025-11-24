@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { encodeSubject } from "../utils/format";
 
 interface SendEmailParams {
   accessToken: string;
@@ -22,23 +23,22 @@ export async function sendEmailWithPDF({
   oauth2Client.setCredentials({ access_token: accessToken });
 
   const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+  const encodedSubject = encodeSubject(subject);
 
   // Build email parts
   const boundary = "boundary123";
   const parts: string[] = [];
 
   // Add HTML body
-  parts.push(
-    `Content-Type: text/html; charset="UTF-8"\n\n${html}`
-  );
+  parts.push(`Content-Type: text/html; charset="UTF-8"\n\n${html}`);
 
   // Add PDF attachment if provided
   if (pdfBuffer && pdfName) {
     const base64Pdf = pdfBuffer.toString("base64");
     parts.push(
       `Content-Type: application/pdf; name="${pdfName}"\n` +
-      `Content-Disposition: attachment; filename="${pdfName}"\n` +
-      `Content-Transfer-Encoding: base64\n\n${base64Pdf}`
+        `Content-Disposition: attachment; filename="${pdfName}"\n` +
+        `Content-Transfer-Encoding: base64\n\n${base64Pdf}`
     );
   }
 
@@ -46,7 +46,7 @@ export async function sendEmailWithPDF({
   const email = [
     `From: "WeWIN HTO" <me@gmail.com>`,
     `To: ${to}`,
-    `Subject: ${subject}`,
+    `Subject: ${encodedSubject}`,
     `Content-Type: multipart/mixed; boundary="${boundary}"`,
     "",
     ...parts.map((part, i) => `--${boundary}\n${part}`),
@@ -64,13 +64,16 @@ export async function sendEmailWithPDF({
       userId: "me",
       requestBody: { raw: encodedMessage },
     });
-    
+
     console.log("✅ Email sent successfully, messageId:", result.data.id);
     return result.data;
   } catch (error: any) {
     console.error("❌ Gmail API error:", error.message);
     if (error.response?.data) {
-      console.error("Error details:", JSON.stringify(error.response.data, null, 2));
+      console.error(
+        "Error details:",
+        JSON.stringify(error.response.data, null, 2)
+      );
     }
     throw error;
   }

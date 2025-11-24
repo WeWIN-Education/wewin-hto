@@ -24,8 +24,8 @@ export default function ReadingSection({ onNext }: ReadingSectionProps) {
   const handleSubmit = () => {
     const empty = Object.keys(answers).length < 4;
 
-    if (empty)
-      return notify("⚠️ Vui lòng điền tất cả các câu trả lời!", "error");
+    // if (empty)
+    //   return notify("⚠️ Vui lòng điền tất cả các câu trả lời!", "error");
 
     localStorage.setItem("ielts_reading", JSON.stringify(answers));
     notify("✅ Bài Reading đã được lưu!", "success");
