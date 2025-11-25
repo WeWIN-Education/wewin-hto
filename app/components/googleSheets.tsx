@@ -75,7 +75,7 @@ export async function appendFinalList(params: AppendFinalListParams) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=USER_ENTERED`;
 
   // Include PDF URL if provided
-  const row = pdfUrl 
+  const row = pdfUrl
     ? [id, name, email, score, pdfUrl]
     : [id, name, email, score, ""];
 
@@ -137,21 +137,21 @@ export async function appendGrammarList(params: AppendGrammarListParams) {
 
   // Build row with detailed scores at the end
   const row = [
-    id,                    // A: ID
-    startTime,             // B: Start Time
-    finishTime,            // C: Finish Time
-    fullName,              // D: Full Name
-    birthDate,             // E: Birth Date
-    location,              // F: Location
-    phone,                 // G: Phone
-    email,                 // H: Email
-    consultant,            // I: Consultant
-    ieltsNeed,             // J: IELTS Need
-    selfScore,             // K: Self Score
-    studyTime,             // L: Study Time
-    ...grammar,            // M onwards: Grammar answers
-    ...reading,            // Reading answers
-    writingAnswer,         // Last writing column
+    id, // A: ID
+    startTime, // B: Start Time
+    finishTime, // C: Finish Time
+    fullName, // D: Full Name
+    birthDate, // E: Birth Date
+    location, // F: Location
+    phone ? `'${phone}` : "", // G: Phone
+    email, // H: Email
+    consultant, // I: Consultant
+    ieltsNeed, // J: IELTS Need
+    selfScore, // K: Self Score
+    studyTime, // L: Study Time
+    ...grammar, // M onwards: Grammar answers
+    ...reading, // Reading answers
+    writingAnswer, // Last writing column
     // ⭐ NEW: Additional columns for detailed scores
     totalScore || "",
     maxScore || "",
@@ -225,9 +225,9 @@ export async function fetchAnswersFromSheet(
 // ⭐ NEW: Transform AnswerRow[] to AnswerKey format
 export function transformToAnswerKey(answerRows: AnswerRow[]): AnswerKey {
   return {
-    answers: answerRows.map(row => row.answer),
-    skills: answerRows.map(row => row.skill),
-    points: answerRows.map(row => row.point),
+    answers: answerRows.map((row) => row.answer),
+    skills: answerRows.map((row) => row.skill),
+    points: answerRows.map((row) => row.point),
   };
 }
 
@@ -237,7 +237,11 @@ export async function fetchAnswerKey(
   sheetId: string,
   sheetName = "Answers"
 ): Promise<AnswerKey> {
-  const answerRows = await fetchAnswersFromSheet(accessToken, sheetId, sheetName);
+  const answerRows = await fetchAnswersFromSheet(
+    accessToken,
+    sheetId,
+    sheetName
+  );
   return transformToAnswerKey(answerRows);
 }
 
@@ -306,7 +310,7 @@ export async function findRowByIdentifier(params: {
   const values = data.values || [];
 
   const rowIndex = values.findIndex((row: any[]) => row[0] === identifier);
-  
+
   // Return 1-based row number (add 1 because arrays are 0-based)
   return rowIndex >= 0 ? rowIndex + 1 : null;
 }
@@ -329,7 +333,7 @@ export async function batchUpdateSheet(params: {
 
   const body = {
     valueInputOption: "USER_ENTERED",
-    data: updates.map(update => ({
+    data: updates.map((update) => ({
       range: update.range,
       values: update.values,
     })),
@@ -357,14 +361,16 @@ export async function batchUpdateSheet(params: {
 // GET SKILL STATISTICS SUMMARY
 // =====================
 
-export function getSkillsSummary(skillStats: Record<string, SkillStats>): string {
+export function getSkillsSummary(
+  skillStats: Record<string, SkillStats>
+): string {
   const lines: string[] = [];
-  
+
   for (const [skill, stats] of Object.entries(skillStats)) {
     const percentage = Math.round((stats.correct / stats.q) * 100);
     lines.push(`${skill}: ${stats.correct}/${stats.q} (${percentage}%)`);
   }
-  
+
   return lines.join(" | ");
 }
 
@@ -381,9 +387,9 @@ export function scoreToIELTSBand(score: number, maxScore: number): number {
 }
 
 export function averageBands(...bands: number[]): number {
-  const validBands = bands.filter(b => b > 0);
+  const validBands = bands.filter((b) => b > 0);
   if (validBands.length === 0) return 0;
-  
+
   const average = validBands.reduce((sum, b) => sum + b, 0) / validBands.length;
   return Math.round(average * 2) / 2;
 }
@@ -392,8 +398,4 @@ export function averageBands(...bands: number[]): number {
 // EXPORT ALL
 // =====================
 
-export type {
-  AppendFinalListParams,
-  AppendGrammarListParams,
-  SkillStats,
-};
+export type { AppendFinalListParams, AppendGrammarListParams, SkillStats };

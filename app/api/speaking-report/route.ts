@@ -805,7 +805,9 @@ export async function POST(req: Request) {
 
     const fullTranscript = Object.values(transcripts).join("\n\n");
     if (!fullTranscript.trim()) {
-      return NextResponse.json({ error: "No transcript" }, { status: 400 });
+      transcripts["part1"] = transcripts["part1"] || "(No answer)";
+      transcripts["part2"] = transcripts["part2"] || "(No answer)";
+      transcripts["part3"] = transcripts["part3"] || "(No answer)";
     }
 
     /* GPT FEEDBACK */
@@ -814,10 +816,10 @@ export async function POST(req: Request) {
       email: finalEmail,
       transcript: fullTranscript,
       questionsText: `
-Part 1: ${questions.part1}
-Part 2: ${questions.part2}
-Part 3: ${questions.part3}
-`.trim(),
+        Part 1: ${questions.part1}
+        Part 2: ${questions.part2}
+        Part 3: ${questions.part3}
+      `.trim(),
     });
 
     /* WORD COUNT */

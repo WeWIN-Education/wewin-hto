@@ -35,7 +35,7 @@ type Stage = "form" | "grammar" | "reading" | "writing" | "speaking" | "done";
 
 export default function IELTSPage() {
   const { notify, visible, message, type, close } = useNotification();
-  const { data: clientSession  } = useSession();
+  const { data: clientSession } = useSession();
 
   const [stage, setStage] = useState<Stage>("form");
 
@@ -81,7 +81,7 @@ export default function IELTSPage() {
       return;
     }
 
-    const accessToken = clientSession ?.accessToken as string;
+    const accessToken = clientSession?.accessToken as string;
     const sheetId = "1Jh_KKBMmUzE7cltx6ZdGeeJIvm2q6PbDlgn_INKNQAY";
 
     try {
@@ -362,22 +362,106 @@ export default function IELTSPage() {
                 )}
               </div>
 
-              <InputField
-                label="Điểm tự đánh giá"
-                name="selfScore"
-                value={userInfo.selfScore}
-                onChange={handleChange}
-                required
-              />
+              {/* Điểm tự đánh giá */}
+              <div className="md:col-span-2 mb-3">
+                <label className="block text-sm font-semibold text-[#0E4BA9] mb-3">
+                  Điểm tự đánh giá theo chuẩn IELTS{" "}
+                  <span className="text-red-500">*</span>
+                </label>
 
-              <InputField
-                label="Thời gian học mỗi tuần"
-                name="studyTime"
-                value={userInfo.studyTime}
-                onChange={handleChange}
-                required
-              />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    {
+                      score: "9.0",
+                      label: "Thông thạo",
+                      desc: "Sử dụng ngôn ngữ linh hoạt, trôi chảy hoàn toàn.",
+                    },
+                    {
+                      score: "8.0",
+                      label: "Rất tốt",
+                      desc: "Sử dụng rất tốt, đôi khi có lỗi nhỏ không đáng kể.",
+                    },
+                    {
+                      score: "7.0",
+                      label: "Tốt",
+                      desc: "Nắm vững ngôn ngữ, đôi khi sai nhưng truyền đạt tốt.",
+                    },
+                    {
+                      score: "6.0",
+                      label: "Khá",
+                      desc: "Giao tiếp tốt trong nhiều tình huống nhưng đôi lúc thiếu tự nhiên.",
+                    },
+                    {
+                      score: "5.0",
+                      label: "Bình thường",
+                      desc: "Hiểu và giao tiếp trong tình huống quen thuộc nhưng còn hạn chế.",
+                    },
+                    {
+                      score: "4.0",
+                      label: "Hạn chế",
+                      desc: "Khả năng giao tiếp hạn chế, chỉ dùng được trong tình huống quen thuộc.",
+                    },
+                    {
+                      score: "3.0",
+                      label: "Cực kì hạn chế",
+                      desc: "Chỉ hiểu tổng quan, rất khó diễn đạt.",
+                    },
+                    {
+                      score: "2.0",
+                      label: "Kém",
+                      desc: "Khó giao tiếp thực tế, dùng rất ít cấu trúc đúng.",
+                    },
+                    {
+                      score: "1.0",
+                      label: "Không biết sử dụng",
+                      desc: "Hoàn toàn không biết sử dụng tiếng Anh.",
+                    },
+                    {
+                      score: "0",
+                      label: "Bỏ thi",
+                      desc: "Không giao tiếp được hoặc không thực hiện bài thi.",
+                    },
+                  ].map((item) => (
+                    <label
+                      key={item.score}
+                      className={`cursor-pointer border rounded-2xl p-4 bg-[#F7FAFF] border-[#B8D7F9]/50 hover:border-[#0E4BA9] transition ${
+                        userInfo.selfScore === item.score
+                          ? "ring-2 ring-[#0E4BA9]"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="radio"
+                          name="selfScore"
+                          value={item.score}
+                          checked={userInfo.selfScore === item.score}
+                          onChange={handleChange}
+                          className="mt-1 w-5 h-5 accent-[#0E4BA9]"
+                          required
+                        />
+                        <div>
+                          <div className="font-bold text-[#0E4BA9] text-lg">
+                            {item.score} – {item.label}
+                          </div>
+                          <div className="text-gray-600 text-sm">
+                            {item.desc}
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </form>
+
+            <InputField
+              label="Thời gian học mỗi tuần"
+              name="studyTime"
+              value={userInfo.studyTime}
+              onChange={handleChange}
+              required
+            />
 
             {/* BUTTON START */}
             <div className="flex justify-center mt-8">
