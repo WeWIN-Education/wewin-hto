@@ -16,7 +16,7 @@ export default function HomePage() {
             transition={{ duration: 0.7 }}
             className="text-5xl md:text-6xl font-bold text-[#0E4BA9]"
           >
-            Welcome to WeWIN Education & HTO
+            WeWIN Education & HT OCEAN GROUP
           </motion.h1>
 
           <motion.p
@@ -25,13 +25,13 @@ export default function HomePage() {
             transition={{ delay: 0.2, duration: 0.7 }}
             className="text-lg md:text-xl mt-6 text-gray-600 max-w-2xl mx-auto"
           >
-            Nền tảng giáo dục đa hệ sinh thái – nơi học tập, công nghệ và trải
-            nghiệm hội tụ để tạo ra hành trình phát triển toàn diện cho trẻ em,
-            học sinh và người lớn.
+            Hệ sinh thái giáo dục – công nghệ – trải nghiệm được xây dựng bởi 
+            WeWIN Education và HT OCEAN Group nhằm tạo ra hành trình học tập hiện đại, 
+            thực tiễn và toàn diện cho thế hệ trẻ Việt Nam.
           </motion.p>
 
           <motion.a
-            href="/"
+            href="#ecosystem"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.7 }}
@@ -49,26 +49,26 @@ export default function HomePage() {
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-[#0E4BA9] text-center">
-            Giới thiệu tổng quan
+            Tầm nhìn & Sứ mệnh
           </h2>
 
           <p className="text-lg text-gray-700 text-center max-w-3xl mx-auto mt-6 leading-relaxed">
-            WeWIN Education và HTO (Holistic Talent Orientation) cùng tạo nên
-            một hệ sinh thái giáo dục toàn diện, bao gồm học tập, trải nghiệm,
-            đánh giá năng lực, và định hướng nghề nghiệp dành cho mọi lứa tuổi.
-            Chúng tôi giúp học viên phát triển kỹ năng thật – đáp ứng nhu cầu
-            học tập hiện đại.
+            Với định hướng đổi mới giáo dục và ứng dụng công nghệ, 
+            WeWIN Education kết hợp cùng HT OCEAN Group tạo ra các chương trình học, 
+            hệ thống đánh giá, nền tảng số và dự án trải nghiệm mang tính thực tiễn cao.  
+            Mục tiêu của chúng tôi: giúp học sinh phát triển kỹ năng thật, 
+            tư duy sáng tạo, và xây dựng nền tảng vững chắc cho tương lai.
           </p>
         </div>
       </section>
 
       {/* =========================
-          BRAND CARDS
+          ECOSYSTEM CARDS
       ========================== */}
-      <section id="brands" className="py-24 bg-[#f5f8fc]">
+      <section id="ecosystem" className="py-24 bg-[#f5f8fc]">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center text-[#0E4BA9]">
-            Hệ sinh thái WeWIN – HTO
+            Hệ sinh thái WeWIN – HT OCEAN GROUP
           </h2>
 
           <div className="grid md:grid-cols-2 gap-10 mt-14">
@@ -81,36 +81,38 @@ export default function HomePage() {
                 WeWIN Education
               </h3>
               <p className="text-gray-700 mt-4 leading-relaxed">
-                Nền tảng giáo dục sáng tạo dành cho trẻ em và học sinh với các
-                chương trình học hiện đại: học tiếng Anh, học kỹ năng, dự án
-                thực tế, tài nguyên học tập, hệ thống thi IELTS, và nhiều tiện
-                ích khác.
+                Tổ chức giáo dục tiên phong trong giảng dạy kỹ năng, tiếng Anh, 
+                tư duy công nghệ và các chương trình trải nghiệm.  
+                WeWIN cung cấp hệ thống học liệu, bài giảng, kiểm tra, đánh giá, 
+                và các dự án học tập dành cho trẻ em và học sinh.
               </p>
 
               <a
-                href="/"
+                href="https://wewin.edu.vn"
                 className="inline-block mt-6 px-6 py-3 rounded-xl text-white bg-gradient-to-r from-[#0E4BA9] to-[#00a6fb] font-medium shadow hover:scale-105 transition"
               >
                 Xem chi tiết
               </a>
             </motion.div>
 
-            {/* HTO Card */}
+            {/* HT OCEAN Card */}
             <motion.div
               whileHover={{ scale: 1.03 }}
               className="bg-white rounded-2xl p-8 shadow-md border border-[#e8eef5]"
             >
-              <h3 className="text-3xl font-bold text-[#E4A13E]">HTO</h3>
+              <h3 className="text-3xl font-bold text-[#2E6F95]">
+                HT OCEAN GROUP
+              </h3>
               <p className="text-gray-700 mt-4 leading-relaxed">
-                HTO (Holistic Talent Orientation) là hệ thống định hướng tài
-                năng toàn diện, giúp học viên phát hiện điểm mạnh, phát triển
-                kỹ năng cốt lõi, lựa chọn nghề nghiệp phù hợp, và xây dựng lộ
-                trình học tập hiệu quả.
+                HT OCEAN Group là đơn vị phát triển công nghệ – vận hành – đào tạo, 
+                cung cấp giải pháp số hóa, hệ thống quản lý, 
+                nền tảng học tập trực tuyến, và hỗ trợ triển khai chương trình giáo dục 
+                trên quy mô lớn cho các đối tác và trường học.
               </p>
 
               <a
-                href="/"
-                className="inline-block mt-6 px-6 py-3 rounded-xl text-white bg-gradient-to-r from-[#E4C28E] to-[#FFB94D] font-medium shadow hover:scale-105 transition"
+                href="https://htogroup.com.vn"
+                className="inline-block mt-6 px-6 py-3 rounded-xl text-white bg-gradient-to-r from-[#2E6F95] to-[#59A8D9] font-medium shadow hover:scale-105 transition"
               >
                 Xem chi tiết
               </a>
@@ -118,13 +120,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* =========================
-          FOOTER
-      ========================== */}
-      <footer className="py-10 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} WeWIN Education & HTO – All rights reserved.
-      </footer>
     </div>
   );
 }
