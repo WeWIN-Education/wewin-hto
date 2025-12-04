@@ -1,6 +1,6 @@
 export const allowedEmails = [
   "dothinh795@gmail.com",
-  "admin@wewin.edu.com",
+  "admin@wewin.edu.vn",
   "officemanager@wewin.edu.vn",
   "prin@wewin.edu.vn",
   "vipkenly1@gmail.com",
@@ -8,7 +8,7 @@ export const allowedEmails = [
 ];
 
 export const adminEmails = [
-  "admin@wewin.edu.com",
+  "admin@wewin.edu.vn",
   "officemanager@wewin.edu.vn",
   "prin@wewin.edu.vn",
 ];
