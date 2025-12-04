@@ -785,12 +785,12 @@ export async function POST(req: Request) {
     if (!session || !session.user?.email) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
-    const userEmail = session.user.email;
+    // const userEmail = session.user.email;
 
     const body = (await req.json()) as SpeakingReportRequest;
     const { accessToken, sheetId, uuid, student, questions, audios } = body;
 
-    const finalEmail = userEmail; // override email học viên bằng email đăng nhập
+    const finalEmail = student.email; // override email học viên bằng email đăng nhập
     const { report } = body;
 
     /* TRANSCRIBE */

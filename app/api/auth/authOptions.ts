@@ -41,14 +41,18 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     /** JWT CALLBACK */
     async jwt({ token, account, profile }) {
-      const acc = account as unknown as GoogleAccount | null;
-      const pf = profile as unknown as GoogleProfile | null;
+      const acc = account as any;
+      const pf = profile as any;
 
-      if (acc && pf) {
+      // FIRST LOGIN
+      if (acc) {
         token.accessToken = acc.access_token;
-        token.refreshToken = acc.refresh_token;
+        token.refreshToken = acc.refresh_token ?? token.refreshToken; // KEY FIX
         token.expiresAt = Date.now() + acc.expires_in * 1000;
+      }
 
+      // Sync user
+      if (acc && pf) {
         try {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
@@ -71,8 +75,10 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
+      // ACCESS TOKEN STILL VALID
       if (Date.now() < (token.expiresAt as number)) return token;
 
+      // EXPIRED → REFRESH
       return refreshAccessToken(token);
     },
 
@@ -99,6 +105,11 @@ export const authOptions: NextAuthOptions = {
 /** ---- REFRESH TOKEN ---- */
 async function refreshAccessToken(token: JWT) {
   try {
+    if (!token.refreshToken) {
+      console.error("No refresh token available.");
+      return { ...token, error: "NoRefreshToken" };
+    }
+
     const res = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -124,3 +135,4 @@ async function refreshAccessToken(token: JWT) {
     return { ...token, error: "RefreshAccessTokenError" };
   }
 }
+

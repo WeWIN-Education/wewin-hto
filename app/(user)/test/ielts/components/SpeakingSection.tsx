@@ -8,6 +8,8 @@ import { useNotification } from "@/app/utils/useNotification";
 import Notification from "@/app/components/notification";
 import ConfirmPopup from "@/app/components/confirmPopup";
 import { formatTimestamp } from "@/app/utils/format";
+import localforage from "localforage";
+import { getSupportedMimeType } from "@/app/utils/audio";
 
 declare global {
   interface Window {
@@ -73,6 +75,8 @@ export default function SpeakingSection({
 
   const DRIVE_FOLDER_ID = "1UkpgUNL9JAIQgT8Ph_fiKJZWDOztI0ai";
   const SHEET_ID = "1Jh_KKBMmUzE7cltx6ZdGeeJIvm2q6PbDlgn_INKNQAY";
+
+  const chunksRef = useRef<BlobPart[]>([]);
 
   /* ---------------------- Load trạng thái ban đầu ---------------------- */
 
@@ -163,14 +167,48 @@ export default function SpeakingSection({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const audioContext = new AudioCtx();
-      const input = audioContext.createMediaStreamSource(stream);
-
-      const recorder = new window.Recorder(input, { numChannels: 1 });
+      const mimeType = getSupportedMimeType();
+      const recorder = new MediaRecorder(stream, { mimeType });
       recorderRef.current = recorder;
 
-      recorder.record();
+      chunksRef.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
+      };
+
+      recorder.onstop = async () => {
+        const blob = new Blob(chunksRef.current, { type: mimeType });
+
+        if (blob.size === 0) {
+          notify("⚠️ Không phát hiện âm thanh!", "error");
+          return;
+        }
+
+        // Lưu base64 để nghe lại (audio tag)
+        const base64 = await blobToBase64(blob);
+        setAudioSrc((prev) => {
+          const updated = { ...prev, [part]: base64 };
+          localStorage.setItem("ielts_audio_base64", JSON.stringify(updated));
+          return updated;
+        });
+
+        setRecordedParts((prev) =>
+          prev.includes(part) ? prev : [...prev, part]
+        );
+
+        // Lưu blob vào IndexedDB để không bị full localStorage
+        await localforage.setItem(`ielts_speaking_blob_${part}`, blob);
+
+        await handleUploadAndLog(blob, part);
+
+        // Stop tracks
+        stream.getTracks().forEach((t) => t.stop());
+      };
+
+      recorder.start();
       setRecordingPart(part);
       setTimer(300);
 
@@ -179,7 +217,7 @@ export default function SpeakingSection({
         setTimer((t) => {
           if (t <= 1) {
             clearIntervalTimer();
-            stopRecording(part);
+            recorder.stop();
             return 0;
           }
           return t - 1;
@@ -197,41 +235,41 @@ export default function SpeakingSection({
     if (!recorder) return;
 
     clearIntervalTimer();
-    recorder.stop();
-    setRecordingPart(null);
 
-    recorder.exportWAV(async (blob: Blob) => {
+    recorder.onstop = async () => {
+      const mimeType = getSupportedMimeType();
+      const blob = new Blob(chunksRef.current, { type: mimeType });
+
       if (blob.size === 0) {
         notify("⚠️ Không phát hiện âm thanh!", "error");
         return;
       }
 
-      try {
-        // 1️⃣ Convert to base64 để nghe lại & lưu localStorage (không tạo request 206)
-        const base64 = await blobToBase64(blob);
+      // Convert → base64 (để nghe lại)
+      const base64 = await blobToBase64(blob);
 
-        setAudioSrc((prev) => {
-          const updated = { ...prev, [part]: base64 };
-          localStorage.setItem("ielts_audio_base64", JSON.stringify(updated));
-          return updated;
-        });
+      setAudioSrc((prev) => {
+        const updated = { ...prev, [part]: base64 };
+        localStorage.setItem("ielts_audio_base64", JSON.stringify(updated));
+        return updated;
+      });
 
-        setRecordedParts((prev) =>
-          prev.includes(part) ? prev : [...prev, part]
-        );
+      setRecordedParts((prev) =>
+        prev.includes(part) ? prev : [...prev, part]
+      );
 
-        // 2️⃣ Upload + log Sheet
-        await handleUploadAndLog(blob, part);
-      } catch (err) {
-        console.error("❌ Error handling audio:", err);
-      } finally {
-        // Dừng stream mic
-        if (stream) {
-          stream.getTracks().forEach((t) => t.stop());
-        }
-        recorder.clear();
-      }
-    });
+      // Save blob to IndexedDB
+      await localforage.setItem(`ielts_speaking_blob_${part}`, blob);
+
+      // Upload + log
+      await handleUploadAndLog(blob, part);
+
+      // Stop mic
+      if (stream) stream.getTracks().forEach((t) => t.stop());
+    };
+
+    recorder.stop();
+    setRecordingPart(null);
   };
 
   const handleUploadAndLog = async (blob: Blob, part: number) => {
