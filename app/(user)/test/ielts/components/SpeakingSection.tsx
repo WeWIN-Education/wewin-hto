@@ -7,7 +7,6 @@ import { apiCall } from "@/app/utils/apiClient";
 import { useNotification } from "@/app/utils/useNotification";
 import Notification from "@/app/components/notification";
 import ConfirmPopup from "@/app/components/confirmPopup";
-import { formatTimestamp } from "@/app/utils/format";
 import localforage from "localforage";
 import { getSupportedMimeType } from "@/app/utils/audio";
 
