@@ -362,31 +362,29 @@ export default function SpeakingSection({
       // ===============================
       // 1. LẤY DỮ LIỆU LOCAL
       // ===============================
-
       const userInfo = JSON.parse(
         localStorage.getItem("ielts_userInfo") || "{}"
       );
       const startTime = localStorage.getItem("ielts_startTime") || "";
       const uuid = localStorage.getItem("ielts_uuid") || undefined;
 
-      const grammarObj = JSON.parse(
-        localStorage.getItem("ielts_grammar") || "{}"
+      const listeningObj = JSON.parse(
+        localStorage.getItem("ielts_listening") || "{}"
       );
-      const grammar = Array.from(
-        { length: 14 },
-        (_, i) => grammarObj[i + 1] || ""
-      );
+
+      const listening = [
+        ...Array.from({ length: 16 }, (_, i) => listeningObj[i + 1] || ""),
+        listeningObj[17] || "",
+        listeningObj[19] || "",
+      ];
 
       const readingObj = JSON.parse(
         localStorage.getItem("ielts_reading") || "{}"
       );
-      const reading = [
-        readingObj["15"] || "",
-        readingObj["16"] || "",
-        readingObj["17"] || "",
-        readingObj["18"] || "",
-        readingObj["19"] || "",
-      ];
+
+      const reading = Array.from({ length: 13 }, (_, i) => {
+        return readingObj[i + 1] || "";
+      });
 
       const writingAnswer =
         localStorage.getItem("ielts_writingAnswer") || "(no answer)";
@@ -408,9 +406,9 @@ export default function SpeakingSection({
           data: {
             ...userInfo,
             startTime,
-            grammar,
-            reading,
+            listening,
             writingAnswer,
+            reading,
           },
         }),
       });

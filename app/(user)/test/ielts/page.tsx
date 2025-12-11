@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { motion } from "framer-motion";
 import { InputField } from "@/app/components/input";
 import ReadingSection from "./components/ReadingSection";
 import WritingSection from "./components/WritingSection";
 import SpeakingSection from "./components/SpeakingSection";
-import GrammarSection from "./components/GrammarSection";
+import ListeningSection from "./components/ListeningSection";
 import { formatDateFromInput, formatTimestamp } from "@/app/utils/format";
 import InputDate from "@/app/components/inputDate";
-
 import Notification from "@/app/components/notification";
 import { useNotification } from "@/app/utils/useNotification";
 import { useSession } from "next-auth/react";
@@ -31,13 +30,16 @@ interface UserInfo {
   studyTime: string;
 }
 
-type Stage = "form" | "grammar" | "reading" | "writing" | "speaking" | "done";
+type Stage = "form" | "listening" | "writing" | "reading" | "speaking" | "done";
 
 export default function IELTSPage() {
   const { notify, visible, message, type, close } = useNotification();
   const { data: clientSession } = useSession();
-
   const [stage, setStage] = useState<Stage>("form");
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [stage]);
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
     fullName: "",
@@ -109,7 +111,7 @@ export default function IELTSPage() {
       localStorage.setItem("ielts_startAt", String(startAt));
 
       // 3️⃣ Bắt đầu Grammar
-      setStage("grammar");
+      setStage("listening");
       notify("🚀 Bắt đầu bài thi!", "success");
     } catch (err: any) {
       notify("❌ Lỗi khi kiểm tra thông tin thi!", "error");
@@ -133,7 +135,7 @@ export default function IELTSPage() {
       />
     );
 
-  if (stage === "grammar")
+  if (stage === "listening")
     return (
       <>
         <Notification
@@ -143,21 +145,7 @@ export default function IELTSPage() {
           onClose={close}
         />
         <TimerWrapper />
-        <GrammarSection onNext={() => handleNext("reading")} />
-      </>
-    );
-
-  if (stage === "reading")
-    return (
-      <>
-        <Notification
-          visible={visible}
-          message={message}
-          type={type}
-          onClose={close}
-        />
-        <TimerWrapper />
-        <ReadingSection onNext={() => handleNext("writing")} />
+        <ListeningSection onNext={() => handleNext("writing")} />
       </>
     );
 
@@ -173,10 +161,24 @@ export default function IELTSPage() {
         <TimerWrapper />
         <WritingSection
           onNext={() => {
-            notify("Đã lưu Writing! Chuyển sang Speaking...", "success");
-            handleNext("speaking");
+            notify("Đã lưu Writing! Chuyển sang Reading...", "success");
+            handleNext("reading");
           }}
         />
+      </>
+    );
+
+  if (stage === "reading")
+    return (
+      <>
+        <Notification
+          visible={visible}
+          message={message}
+          type={type}
+          onClose={close}
+        />
+        <TimerWrapper />
+        <ReadingSection onNext={() => handleNext("speaking")} />
       </>
     );
 

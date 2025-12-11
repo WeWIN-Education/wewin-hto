@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing email" }, { status: 400 });
     }
 
-    const sheetName = "Grammar_list";
+    const sheetName = "Listening_list";
 
     // Fetch toàn bộ cột Email
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'${sheetName}'!G:G?majorDimension=COLUMNS`;

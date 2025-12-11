@@ -60,9 +60,6 @@ export default function WritingSection({ onNext }: WritingSectionProps) {
           <h1 className="text-4xl font-bold text-[#0E4BA9] mb-3 text-center">
             📝 IELTS Writing Test
           </h1>
-          <p className="text-center text-gray-500 mb-6">
-            <strong>Thời gian:</strong> 25 phút — Hãy viết 100–150 từ
-          </p>
 
           {/* Timer */}
           <div
@@ -76,10 +73,7 @@ export default function WritingSection({ onNext }: WritingSectionProps) {
           {/* Question */}
           <div className="bg-[#F8FBFF] p-6 rounded-2xl shadow-inner mb-8">
             <h2 className="text-lg font-medium text-gray-700 leading-relaxed">
-              <strong>Question:</strong> Traffic jams are a serious problem in
-              many large cities today. How should we deal with this problem?
-              Write a single paragraph (100–150 words). Try to use words and
-              grammar that will show the best of your English.
+              <strong>Question:</strong> Some people prefer online shopping to traditional shopping in stores. What are the advantages and disadvantages of this trend? You should write at least 150 words.
             </h2>
           </div>
 

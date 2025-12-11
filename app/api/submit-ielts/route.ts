@@ -5,7 +5,7 @@ import { evaluateWriting } from "../generate-ielts/route";
 
 import {
   appendFinalList,
-  appendGrammarList,
+  appendIELTSList,
   fetchAnswersFromSheet,
   transformToAnswerKey,
   scoreToIELTSBand,
@@ -202,14 +202,11 @@ export async function POST(req: Request) {
       selfScore,
       studyTime,
       startTime,
-      grammar,
-      reading,
+      listening,
       writingAnswer,
+      reading,
     } = data;
 
-    // ---------------------------------------------------
-    // 2. FIX READING ARRAY
-    // ---------------------------------------------------
     const readingArr = Array.isArray(reading)
       ? reading
       : Object.values(reading || {});
@@ -217,10 +214,6 @@ export async function POST(req: Request) {
     const id = uuid || randomUUID();
     const finishTime = formatTimestamp();
 
-    // ---------------------------------------------------
-    // 3. FETCH ANSWER KEY & TRANSFORM
-    // ---------------------------------------------------
-    console.log("📊 Fetching answer key from sheet...");
     const rawAnswerKey = await fetchAnswersFromSheet(accessToken, sheetId);
     const answerKey = transformToAnswerKey(rawAnswerKey);
 
@@ -230,7 +223,7 @@ export async function POST(req: Request) {
     // 4. GRADE GRAMMAR + READING (COMBINED)
     // ---------------------------------------------------
     console.log("📝 Grading Grammar + Reading...");
-    const allResponses = [...grammar, ...readingArr];
+    const allResponses = [...listening, ...readingArr];
     const gradingResult = gradeResponses(allResponses, answerKey);
 
     console.log("✅ Grading completed:");
@@ -287,8 +280,8 @@ export async function POST(req: Request) {
     // ---------------------------------------------------
     // 7. APPEND GRAMMAR LIST WITH DETAILED SCORES
     // ---------------------------------------------------
-    console.log("📝 Saving results to Grammar_list...");
-    await appendGrammarList({
+    console.log("📝 Saving results to Listening_list...");
+    await appendIELTSList({
       accessToken,
       sheetId,
       id,
@@ -303,9 +296,9 @@ export async function POST(req: Request) {
       studyTime,
       startTime,
       finishTime,
-      grammar,
-      reading: readingArr,
+      listening,
       writingAnswer,
+      reading: readingArr,
       // ⭐ NEW: Detailed scores
       // totalScore: gradingResult.totalScore,
       // maxScore: gradingResult.maxScore,

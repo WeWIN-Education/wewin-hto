@@ -21,7 +21,7 @@ interface SkillStats {
   q: number;
 }
 
-interface AppendGrammarListParams {
+interface AppendIELTSListParams {
   accessToken: string;
   sheetId: string;
   id: string;
@@ -36,7 +36,7 @@ interface AppendGrammarListParams {
   studyTime: string;
   startTime: string;
   finishTime: string;
-  grammar: string[];
+  listening: string[];
   reading: string[];
   writingAnswer: string;
   // ⭐ NEW: Detailed scoring fields
@@ -105,7 +105,7 @@ export async function appendFinalList(params: AppendFinalListParams) {
 // APPEND GRAMMAR LIST (ENHANCED)
 // =====================
 
-export async function appendGrammarList(params: AppendGrammarListParams) {
+export async function appendIELTSList(params: AppendIELTSListParams) {
   const {
     accessToken,
     sheetId,
@@ -121,9 +121,9 @@ export async function appendGrammarList(params: AppendGrammarListParams) {
     studyTime,
     startTime,
     finishTime,
-    grammar,
-    reading,
+    listening,
     writingAnswer,
+    reading,
     // New scoring fields
     totalScore,
     maxScore,
@@ -137,22 +137,21 @@ export async function appendGrammarList(params: AppendGrammarListParams) {
 
   // Build row with detailed scores at the end
   const row = [
-    id, // A: ID
-    startTime, // B: Start Time
-    finishTime, // C: Finish Time
-    fullName, // D: Full Name
-    birthDate, // E: Birth Date
-    location, // F: Location
-    phone ? `'${phone}` : "", // G: Phone
-    email, // H: Email
-    consultant, // I: Consultant
-    ieltsNeed, // J: IELTS Need
-    selfScore, // K: Self Score
-    studyTime, // L: Study Time
-    ...grammar, // M onwards: Grammar answers
-    ...reading, // Reading answers
-    writingAnswer, // Last writing column
-    // ⭐ NEW: Additional columns for detailed scores
+    id, // A
+    startTime, // B
+    finishTime, // C
+    fullName, // D
+    birthDate, // E
+    location, // F
+    phone ? `'${phone}` : "", // G
+    email, // H
+    consultant, // I
+    ieltsNeed, // J
+    selfScore, // K
+    studyTime, // L
+    ...listening, // 20 phần tử
+    writingAnswer,
+    ...reading, // 13 phần tử
     totalScore || "",
     maxScore || "",
     correctCount || "",
@@ -160,11 +159,10 @@ export async function appendGrammarList(params: AppendGrammarListParams) {
     grammarReadingBand || "",
     writingBand || "",
     overallBand || "",
-    // Skill breakdown as JSON string (optional)
     skillStats ? JSON.stringify(skillStats) : "",
   ];
 
-  const range = `Grammar_list!A:AZ`; // Extended to AZ to accommodate new fields
+  const range = `Listening_list!A:BF`; // Extended to AZ to accommodate new fields
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=USER_ENTERED`;
 
   const body = { values: [row] };
@@ -181,10 +179,10 @@ export async function appendGrammarList(params: AppendGrammarListParams) {
   if (!res.ok) {
     const t = await res.text();
     console.error("❌ appendGrammarList error:", t);
-    throw new Error("Failed to append Grammar_list");
+    throw new Error("Failed to append Listening_list");
   }
 
-  console.log("✅ Grammar_list appended with detailed scores");
+  console.log("✅ Listening_list appended with detailed scores");
 }
 
 // =====================
@@ -257,7 +255,7 @@ export async function updateGrammarListRow(params: {
 }) {
   const { accessToken, sheetId, rowNumber, values } = params;
 
-  const range = `Grammar_list!A${rowNumber}:AZ${rowNumber}`;
+  const range = `Listening_list!A${rowNumber}:AZ${rowNumber}`;
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?valueInputOption=USER_ENTERED`;
 
   const body = { values: [values] };
@@ -274,10 +272,10 @@ export async function updateGrammarListRow(params: {
   if (!res.ok) {
     const text = await res.text();
     console.error("❌ updateGrammarListRow error:", text);
-    throw new Error("Failed to update Grammar_list row");
+    throw new Error("Failed to update Listening_list row");
   }
 
-  console.log(`✅ Grammar_list row ${rowNumber} updated`);
+  console.log(`✅ Listening_list row ${rowNumber} updated`);
 }
 
 // =====================
@@ -398,4 +396,4 @@ export function averageBands(...bands: number[]): number {
 // EXPORT ALL
 // =====================
 
-export type { AppendFinalListParams, AppendGrammarListParams, SkillStats };
+export type { AppendFinalListParams, AppendIELTSListParams as AppendGrammarListParams, SkillStats };
